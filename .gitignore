@@ -1,0 +1,14 @@
+# Hugo
+/.hugo_build.lock
+/public/
+/resources/
+
+
+# macOS
+.DS_Store
+
+# misc
+*.log
+
+# nvim
+.nvim.lua
