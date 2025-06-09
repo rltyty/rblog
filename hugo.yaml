@@ -1,4 +1,5 @@
 baseURL: https://korhal.h4ck.me
 languageCode: en-us
 title: rblog
-theme: PaperMod
+copyright: "© [rblog](https://github.com/rltyty/rblog)"
+theme: [PaperMod]
