@@ -1,9 +1,63 @@
 ---
-date: '2025-06-09T23:52:20+08:00'
-draft: true
-title: 'Ch1 Overview'
-ShowToc: true
-tags: ['unix']
+title: "01 Overview"
+subtitle: ""
+date: 2025-07-28T15:21:10+08:00
+lastmod: 2025-07-28T15:21:10+08:00
+draft: false
+author: "rltyty"
+authorLink: ""
+description: ""
+license: ""
+images: []
+
+tags: ['Unix']
+categories: ['IT']
+
+featuredImage: ""
+featuredImagePreview: ""
+
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+  keepStatic: false
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: true
+  # ...
+mapbox:
+  # ...
+share:
+  enable: true
+  # ...
+comment:
+  enable: true
+  # ...
+library:
+  css:
+    # someCSS = "some.css"
+    # located in "assets/"
+    # Or
+    # someCSS = "https://cdn.example.com/some.css"
+  js:
+    # someJS = "some.js"
+    # located in "assets/"
+    # Or
+    # someJS = "https://cdn.example.com/some.js"
+seo:
+  images: []
+  # ...
 ---
 
 ## System Calls and Library Functions

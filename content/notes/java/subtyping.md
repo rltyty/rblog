@@ -1,10 +1,65 @@
 ---
-date: '2025-07-20T07:55:36+08:00'
+title: "Subtyping"
+subtitle: ""
+date: 2025-07-28T15:21:10+08:00
+lastmod: 2025-07-28T15:21:10+08:00
 draft: false
-title: 'Subtyping'
-ShowToc: true
-tags: ["java"]
+author: "rltyty"
+authorLink: ""
+description: ""
+license: ""
+images: []
+
+tags: ['Java']
+categories: ['IT']
+
+featuredImage: ""
+featuredImagePreview: ""
+
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+  keepStatic: false
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: true
+  # ...
+mapbox:
+  # ...
+share:
+  enable: true
+  # ...
+comment:
+  enable: true
+  # ...
+library:
+  css:
+    # someCSS = "some.css"
+    # located in "assets/"
+    # Or
+    # someCSS = "https://cdn.example.com/some.css"
+  js:
+    # someJS = "some.js"
+    # located in "assets/"
+    # Or
+    # someJS = "https://cdn.example.com/some.js"
+seo:
+  images: []
+  # ...
 ---
+
 
 ## Subtyping (`<:`)
 

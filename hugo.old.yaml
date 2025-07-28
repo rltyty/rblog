@@ -1,69 +1,79 @@
-baseURL: https://korhal.h4ck.me
-theme: LoveIt
-title: rblog
-languageCode: en
-languageName: English
-hasCJKLanguage: false
+baseURL: "https://korhal.h4ck.me"
+languageCode: "en-us"
+languageName: "English"
+title: "rblog"
 copyright: "© [rblog contributors](https://github.com/rltyty/rblog/graphs/contributors)"
-enableRobotsTXT: true
+theme:
+  - LoveIt
+
 enableGitInfo: true
 enableEmoji: true
-ignoreErrors:
-  - error-remote-getjson
-  - error-missing-instagram-accesstoken
+enableRobotsTXT: true
+mainsections: ["apue", "conda", "java"]
+
 pagination:
   disableAliases: false
   pagerSize: 10
-  path: page
+  path: "page"
+
 menu:
   main:
-    - weight: 1
-      identifier: notes
-      pre: ""
-      post: ""
-      name: 笔记
-      url: /notes/
-      title: ""
-    - weight: 2
-      identifier: tags
-      pre: ""
-      post: ""
-      name: 标签
-      url: /tags/
-      title: ""
-    - weight: 3
-      identifier: categories
-      pre: ""
-      post: ""
-      name: 分类
-      url: /categories/
-      title: ""
-    - weight: 4
-      identifier: rhub
-      pre: ""
-      post: ""
-      name: 其它
-      url: /rhub/
-      title: "rhub"
+    - name: "Archive"
+      url: "/archives/"
+      weight: 5
+    - name: "Search"
+      url: "/search/"
+      weight: 10
+    - name: "Tags"
+      url: "/tags/"
+      weight: 10
+    - name: "WiKi"
+      url: "https://github.com/rltyty/rblog/wiki"
+    - name: "Rhub"
+      url: "/rhub/"
+
+markup:
+  highlight:
+    noClasses: false
+  goldmark:
+    # renderer:
+      # unsafe: true   # Critical for math support
+    extensions:
+      passthrough:
+        delimiters:
+          block:
+          - - \[
+            - \]
+          - - $$
+            - $$
+          inline:
+          - - \(
+            - \)
+          - - $
+            - $
+        enable: true
+
+module:
+  hugoVersion:
+    min: 0.147.7
 params:
   defaultTheme: auto
-  gitRepo: "rltyty/rblog"
+  gitRepo: ""
   fingerprint: ""
-  dateFormat: "2025-03-02"
-  title: Welcome to rblog!
-  description: rblog and my knowledge base
-  images:
-    - /logo.png
+  dateFormat: "2006-01-02"
+  title: Personal knowledge base.
+  description: Personal knowledge base.
+  images: []
   author:
     name: rltyty
-    email: ""
-    link: ""
+    email: except10n.rlt@gmail.com
+    link: https://korhal.h4ck.me
   header:
     desktopMode: fixed
     mobileMode: auto
     title:
       logo: ""
-      name: "rblog"
+      name: rblog
       pre: ""
       post: ""
       typeit: false
@@ -75,17 +85,17 @@ params:
     author: true
     since: 2024
     icp: ""
-    license: <a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a>
+    license: ""
   section:
-    paginate: 20
+    paginate: 10
     dateFormat: 01-02
     rss: 10
   list:
-    paginate: 20
+    paginate: 10
     dateFormat: 01-02
     rss: 10
   app:
-    title: 我的博客知识库
+    title: rblog
     noFavicon: false
     svgFavicon: ""
     themeColor: '#ffffff'
@@ -109,99 +119,20 @@ params:
     profile:
       enable: true
       gravatarEmail: ""
-      avatarURL: "https://raw.githubusercontent.com/googlefonts/noto-emoji/refs/heads/main/svg/emoji_u1f989.svg"
-      title: "☄️ 博客 | ☁️ 笔记 | 🌙 知识库 | 📱 分享"
-      subtitle: "____Hello, World!____"
+      avatarURL: ""
+      title: ""
+      subtitle: Welcome to my knowledge base!
       typeit: true
       social: true
       disclaimer: ""
     posts:
       enable: true
       paginate: 6
-      defaultHiddenFromHomePage: false
   social:
-    GitHub: rltyty
-    Linkedin: ""
-    X: ""
-    Twitter: ""
-    Instagram: ""
-    Facebook: ""
-    Telegram: ""
-    Medium: ""
-    Gitlab: ""
-    Youtubelegacy: ""
-    Youtubecustom: ""
-    Youtubechannel: ""
-    Tumblr: ""
-    Quora: ""
-    Keybase: ""
-    Pinterest: ""
-    Reddit: ""
-    Codepen: ""
-    FreeCodeCamp: ""
-    Bitbucket: ""
-    Stackoverflow: ""
-    Weibo: ""
-    Odnoklassniki: ""
-    VK: ""
-    Flickr: ""
-    Xing: ""
-    Snapchat: ""
-    Soundcloud: ""
-    Spotify: ""
-    Bandcamp: ""
-    Paypal: ""
-    Fivehundredpx: ""
-    Mix: ""
-    Goodreads: ""
-    Lastfm: ""
-    Foursquare: ""
-    Hackernews: ""
-    Kickstarter: ""
-    Patreon: ""
-    Steam: ""
-    Twitch: ""
-    Strava: ""
-    Skype: ""
-    Whatsapp: ""
-    Zhihu: ""
-    Douban: ""
-    Angellist: ""
-    Slidershare: ""
-    Jsfiddle: ""
-    Deviantart: ""
-    Behance: ""
-    Dribbble: ""
-    Wordpress: ""
-    Vine: ""
-    Googlescholar: ""
-    Researchgate: ""
-    Mastodon: ""
-    Thingiverse: ""
-    Devto: ""
-    Gitea: ""
-    XMPP: ""
-    Matrix: ""
-    Bilibili: ""
-    Discord: ""
-    DiscordInvite: ""
-    Lichess: ""
-    ORCID: ""
-    Pleroma: ""
-    Kaggle: ""
-    MediaWiki: ""
-    Plume: ""
-    HackTheBox: ""
-    RootMe: ""
-    Malt: ""
-    TikTok: ""
-    TryHackMe: ""
-    Codeberg: ""
-    HuggingFace: ""
-    Threads: ""
+    GitHub: "rltyty"
+    Email: "except10n.rlt@gmail.com"
     Phone: ""
-    Email: except10n.rlt@gmail.com
-    RSS: true
+    RSS: ""
   page:
     hiddenFromHomePage: false
     hiddenFromSearch: false
@@ -216,17 +147,20 @@ params:
       enable: true
       keepStatic: false
       auto: true
-    math:
-      enable: true
-      inlineLeftDelimiter: "$"
-      inlineRightDelimiter: "$"
-      blockLeftDelimiter: "$$"
-      blockRightDelimiter: "$$"
-      copyTex: true
-      mhchem: true
     code:
       copy: true
       maxShownLines: 50
+      render:
+        goat: true
+        mermaid: true
+    math:
+      enable: false
+      inlineLeftDelimiter: ""
+      inlineRightDelimiter: ""
+      blockLeftDelimiter: ""
+      blockRightDelimiter: ""
+      copyTex: true
+      mhchem: true
     mapbox:
       accessToken: ""
       lightStyle: mapbox://styles/mapbox/light-v10?optimize=true
@@ -237,8 +171,7 @@ params:
       fullscreen: true
     share:
       enable: true
-      X: false
-      Twitter: false
+      X: true
       Threads: true
       Facebook: true
       Linkedin: false
@@ -351,10 +284,8 @@ params:
     image: ""
     thumbnailUrl: ""
   analytics:
-    enable: true
     google:
       id: ""
-      anonymizeIP: true
       respectDoNotTrack: false
     fathom:
       id: ""
@@ -364,80 +295,13 @@ params:
     yandexMetrica:
       id: ""
   cookieconsent:
-    enable: true
+    enable: false
     content:
       message: ""
       dismiss: ""
       link: ""
   cdn:
-    data: ""
+    data: jsdelivr.yml
   compatibility:
     polyfill: false
     objectFit: false
-markup:
-  highlight:
-    codeFences: true
-    guessSyntax: true
-    lineNos: true
-    lineNumbersInTable: true
-    noClasses: false
-  goldmark:
-    extensions:
-      passthrough:
-        delimiters:
-          block:
-          - - \[
-            - \]
-          - - $$
-            - $$
-          inline:
-          - - \(
-            - \)
-          - - $
-            - $
-        enable: true
-      definitionList: true
-      footnote: true
-      linkify: true
-      strikethrough: true
-      table: true
-      taskList: true
-      typographer: true
-    renderer:
-      unsafe: true
-  tableOfContents:
-    startLevel: 2
-    endLevel: 6
-sitemap:
-  changefreq: weekly
-  filename: sitemap.xml
-  priority: 0.5
-Permalinks:
-  posts: :filename
-privacy:
-  googleAnalytics: {}
-  twitter: {}
-  youtube: {}
-mediaTypes:
-  text/plain:
-    suffixes:
-      - md
-outputFormats:
-  MarkDown:
-    mediaType: text/plain
-    isPlainText: true
-    isHTML: false
-outputs:
-  home:
-    - HTML
-    - RSS
-    - JSON
-  page:
-    - HTML
-    - MarkDown
-  section:
-    - HTML
-    - RSS
-  taxonomy:
-    - HTML
-    - RSS

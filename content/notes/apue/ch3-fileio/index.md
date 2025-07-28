@@ -1,9 +1,63 @@
 ---
-date: '2025-06-09T23:37:58+08:00'
-draft: true
-title: 'Ch3 File I/O'
-ShowToc: true
-tags: ['unix', 'fileio']
+title: "03 File I/O"
+subtitle: ""
+date: 2025-07-28T15:21:10+08:00
+lastmod: 2025-07-28T15:21:10+08:00
+draft: false
+author: "rltyty"
+authorLink: ""
+description: ""
+license: ""
+images: []
+
+tags: ['Unix', 'I/O']
+categories: ['IT']
+
+featuredImage: ""
+featuredImagePreview: ""
+
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+  keepStatic: false
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: true
+  # ...
+mapbox:
+  # ...
+share:
+  enable: true
+  # ...
+comment:
+  enable: true
+  # ...
+library:
+  css:
+    # someCSS = "some.css"
+    # located in "assets/"
+    # Or
+    # someCSS = "https://cdn.example.com/some.css"
+  js:
+    # someJS = "some.js"
+    # located in "assets/"
+    # Or
+    # someJS = "https://cdn.example.com/some.js"
+seo:
+  images: []
+  # ...
 ---
 
 ## Introduction
