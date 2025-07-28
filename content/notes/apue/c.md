@@ -3,23 +3,30 @@ date: '2025-06-09T07:55:36+08:00'
 draft: true
 title: 'C'
 ShowToc: true
+tags: ["c"]
 ---
 
 ## IDE Neovim Lsp Configuration for a C project
 
 ### generate compile_commands.json [1]
 
-    make clean; bear -- make
+```sh
+make clean; bear -- make
+```
 
 ### generate .clang-format [2]
 
-    clang-format -style=llvm -dump-config > .clang-format
+```sh
+clang-format -style=llvm -dump-config > .clang-format
+```
 
 #### By default, `IndentWidth: 2`
 
 ## Use gcc/clang to check "include" search pathes on both macOS and Linux
 
-    gcc/clang -xc -E -v -
+```sh
+gcc/clang -xc -E -v -
+```
 
 ## puts vs printf
 
@@ -50,11 +57,13 @@ Call depth is limited by stack size. Segment fault occurs when recursive call
 goes too deep, i.e. stack overflow. On macOS, the default stack size limit is
 8MB. It can be increased to its hard limit 64MB.
 
-    ulimit -s
-    8192    (KBytes)
+```sh
+ulimit -s
+8192    (KBytes)
 
-    ulimit -Hs
-    65532   (KBytes)
+ulimit -Hs
+65532   (KBytes)
+```
 
 Program built in release, optimized mode, stack frame smmaller, depth is deeper.
 Program built in debug, unoptimized mode, stack frame bigger, depth is shallower.

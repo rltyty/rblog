@@ -3,6 +3,7 @@ date: '2025-06-09T23:52:20+08:00'
 draft: true
 title: 'Ch1 Overview'
 ShowToc: true
+tags: ['unix']
 ---
 
 ## System Calls and Library Functions

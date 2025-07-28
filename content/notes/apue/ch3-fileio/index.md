@@ -1,8 +1,9 @@
 ---
 date: '2025-06-09T23:37:58+08:00'
 draft: true
-title: 'Ch3-fileio'
+title: 'Ch3 File I/O'
 ShowToc: true
+tags: ['unix', 'fileio']
 ---
 
 ## Introduction
@@ -536,18 +537,26 @@ Most systems ignore the specified mode, whereas others require that it be a
 subset of the mode used when the referenced file was originally opened (E.g.
 macOS).
 
-The Linux implementation of /dev/fd is an exception. It maps file descriptors
+The Linux implementation of `/dev/fd` is an exception. It maps file descriptors
 into symbolic links pointing to the underlying physical file. When you open a
-/dev/fd/n, you are really opening the file associated with real file. Thus the
-mode of the new descriptor is unrelated to the mode of the /dev/fd/n.
+`/dev/fd/n`, you are really opening the file associated with real file. Thus the
+mode of the new descriptor is unrelated to the mode of the `/dev/fd/n`.
 
-/dev/stdin -> /dev/fd/0, /dev/stdout -> /dev/fd/1, /dev/stderr -> /dev/fd/2
+```sh
+/dev/stdin -> /dev/fd/0
+/dev/stdout -> /dev/fd/1
+/dev/stderr -> /dev/fd/2
+```
 
-    filter file2 | cat file1 - file2 | lpr
+```sh
+filter file2 | cat file1 - file2 | lpr
+```
 
 is equivalent to
 
-    filter file2 | cat file1 /dev/fd/0 file2 | lpr
+```sh
+filter file2 | cat file1 /dev/fd/0 file2 | lpr
+```
 
 ## Exercises
 
@@ -563,7 +572,7 @@ When we say ***unbuffered***, we mean "unbuffered in userspace" (to minimize
 the system call overhead). The data read/written here will go through the
 kernel's buffer cache.
 
-See [Ex3_1_read_and_write.c](./src/Ex3_1_read_write.c)
+See [Ex3_1_read_and_write.c](./src/ch3/Ex3_1_read_write.c)
 
 Q3.2 Write your own `dup2(2)`, don't use `fcntl`. Be sure to handle errors.
 
@@ -686,15 +695,17 @@ Which fds are affected by an fcntl(2) on fd1 with a command of F_SETFL?
 A: With F_SETFD, only fd1 is affected. With F_SETFL, both fd1 and fd2 are
 affected.
 
-![Ex3.3 resulting picture](./drawings/Ex_3_3.png)
+![Ex3.3 resulting picture](./drawings/ch3/Ex_3_3.png)
 
 Q3.4 The following sequence of code has been observed in various programs:
 
-    dup2(fd, 0);
-    dup2(fd, 1);
-    dup2(fd, 2);
-    if(fd > 2)
-        close(fd);
+```c
+dup2(fd, 0);
+dup2(fd, 1);
+dup2(fd, 2);
+if(fd > 2)
+    close(fd);
+```
 
 A: If fd is 1, after the execution of the above sequence of code, the three
 file descriptor 0, 1, 2 point to the same file table entry that the fd 1 has
@@ -705,13 +716,17 @@ and point to the same file table entry.
 
 Q3.5 The Bourne shell, Bash, Ksh notation
 
-    digit1>&digit2
+```sh
+digit1>&digit2
+```
 
 says to redirect descriptor digit1 to the same file as descriptor digit2. What
 is the difference between the two commands shown below?
 
-    ./a.out > outfile 2>&1
-    ./a.out 2>&1 > outfile
+```sh
+./a.out > outfile 2>&1
+./a.out 2>&1 > outfile
+```
 
 A: 1st command, it says the standard output of ./a.out is redirected to
 outfile, and the standard error of ./a.out is also redirected to outfile.
@@ -720,15 +735,19 @@ standard output, and the standard output is redirected to outfile.
 Concisely speaking,
 1st command:
 
-    fd = open("outfile", O_WRONLY);
-    dup2(fd, 1);
-    dup2(1, 2);  /* dup2(fd, 2);*/
+```c
+fd = open("outfile", O_WRONLY);
+dup2(fd, 1);
+dup2(1, 2);  /* dup2(fd, 2);*/
+```
 
 2nd command:
 
-    dup(1, 2);
-    fd = open("outfile", O_WRONLY);
-    dup2(fd, 1);
+```c
+dup(1, 2);
+fd = open("outfile", O_WRONLY);
+dup2(fd, 1);
+```
 
 Q3.6 If you open a file for read-write with the append flag (O_RDWR|O_APPEND),
 can you still read from anywhere in the file using lseek? Can you use lseek to
@@ -773,4 +792,5 @@ int main(void)
 ```
 
 ## Summary
+
 

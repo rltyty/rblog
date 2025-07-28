@@ -1,0 +1,24 @@
+{{/* Get all tags and their count */}}
+{{ $tags := .Site.Taxonomies.tags }}
+
+{{/* Calculate min/max count to scale font sizes */}}
+{{ $maxCount := 0 }}
+{{ $minCount := 999999 }}
+{{ range $name, $tag := $tags }}
+  {{ if gt $tag.Count $maxCount }}{{ $maxCount = $tag.Count }}{{ end }}
+  {{ if lt $tag.Count $minCount }}{{ $minCount = $tag.Count }}{{ end }}
+{{ end }}
+
+{{ $spread := sub $maxCount $minCount }}
+{{ if eq $spread 0 }}{{ $spread = 1 }}{{ end }}
+
+<div class="tag-cloud">
+  {{ range $name, $tag := $tags }}
+    {{/* Scale font size between 0.8em and 2em */}}
+    {{ $size := add 0.8 (mul (div (sub $tag.Count $minCount) $spread) 1.2) }}
+    <a href="{{ $tag.Page.RelPermalink }}" style="font-size: {{ printf "%.2f" $size }}em;">
+      {{ $name }}
+    </a>
+  {{ end }}
+</div>
+

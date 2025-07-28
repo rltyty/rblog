@@ -3,9 +3,12 @@ date: '2025-06-09T23:45:03+08:00'
 draft: true
 title: 'Ch2 Unixstd'
 ShowToc: true
+tags: [ 'unix', 'c' ]
 ---
 
-## IEEE POSIX(portable operating system interface) (1003.1)
+## IEEE POSIX 1003.1
+
+**POSIX (portable operating system interface)**
 
 ![1003.1-2001](./images/IEEE%20Standard%201003.1-2001.png)
 
@@ -19,7 +22,9 @@ NOTE: shell and utilities (1003.2)
 
 On macOS, the headers are under
 
-    /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/
+```sh
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/
+```
 
 ### The Single Unix Specification(SUS)
 
@@ -105,8 +110,10 @@ The following limits are defined in <stdio.h>,
 
 On macOS,
 
-    /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/
-    limits.h -> machine/limits.h -> i386/limits.h (C limits)
+```sh
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/
+limits.h -> machine/limits.h -> i386/limits.h (C limits)
+```
 
 #### POSIX Limits
 
@@ -137,8 +144,10 @@ runtime values.
 
 On macOS,
 
-    /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/
-    limits.h -> sys/syslimits.h (actual implementation values w/o _POSIX_)
+```sh
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/
+limits.h -> sys/syslimits.h (actual implementation values w/o _POSIX_)
+```
 
 #### XSI Limits
 
@@ -153,8 +162,10 @@ Also about implementation limits.
 
 On macOS,
 
-    /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/
-    limits.h
+```sh
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/
+limits.h
+```
 
 #### sysconf, pathconf, fpathconf
 
@@ -180,8 +191,10 @@ of the three conf functions.
 
 On macOS,
 
+```sh
     /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/
     unistd.h
+```
 
 #### Indeterminate Runtime Limits
 
@@ -333,6 +346,7 @@ List the actual data types to implement the primitive system data types.
 
 On macOS,
 
+```sh
 <stddef.h> -> <sys/_types.h> (<i386/_types.h>) -> <sys/types/_xxx_t.h>
 
 clock_t         unsigned long
@@ -349,6 +363,7 @@ wchar_t         int
 gid_t           unsigned int
 uid_t           unsigned int
 pid_t           int
+```
 
 #### 2.3 Deal with sysconf returning LONG_MAX as the limit for OPEN_MAX.
 

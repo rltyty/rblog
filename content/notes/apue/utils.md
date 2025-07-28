@@ -3,7 +3,9 @@ date: '2025-06-09T18:38:46+08:00'
 draft: true
 title: 'Utils'
 ShowToc: true
+tags: ['utils']
 ---
+
 ## awk
 
 ### read a file line by line
@@ -31,7 +33,7 @@ This can be used to generate files. (See below [Makefile](#makefile), Ch.2 stand
 
 Note: ***A implicit rule is followed by NO recipes!!!***
 
-```Makefile
+```make
 conf:	conf.c
 
 conf.c:	makeconf.awk sysconf.sym pathconf.sym
@@ -110,9 +112,11 @@ od -a ./file.hole
 
 Retrieve standard configuration variables
 
-     getconf -a [file]
-     getconf [-v environment] path_var file
-     getconf [-v environment] system_var
+```sh
+ getconf -a [file]
+ getconf [-v environment] path_var file
+ getconf [-v environment] system_var
+```
 
 E.g.
 
@@ -131,4 +135,7 @@ getconf -v POSIX_V6_LP64_OFF64 FILESIZEBITS ./aaa
 
 ## Zathura
 
-    <Tab>   Display the contents
+```manual
+<Tab>   Display the contents
+```
+

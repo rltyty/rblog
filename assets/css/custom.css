@@ -1,0 +1,16 @@
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag-cloud a {
+  text-decoration: none;
+  color: #555;
+  transition: all 0.3s ease;
+}
+
+.tag-cloud a:hover {
+  color: #000;
+}
+
