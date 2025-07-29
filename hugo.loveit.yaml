@@ -134,6 +134,7 @@ params:
   page:
     hiddenFromHomePage: false
     hiddenFromSearch: false
+    hiddenFromTOC: false
     twemoji: false
     lightgallery: false
     ruby: true

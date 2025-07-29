@@ -1,8 +1,8 @@
 ---
 title: "Basic Tests"
 subtitle: ""
-date: 2025-07-28T15:21:10+08:00
-lastmod: 2025-07-28T15:21:10+08:00
+date: 2025-07-29T09:30:28+08:00
+lastmod: 2025-07-29T09:30:28+08:00
 draft: false
 author: "rltyty"
 authorLink: ""
@@ -10,8 +10,8 @@ description: ""
 license: ""
 images: []
 
-tags: ['Math']
-categories: ['Math']
+tags: ["Math"]
+categories: ["Math"]
 
 featuredImage: ""
 featuredImagePreview: ""
@@ -1307,6 +1307,4 @@ $(1+x)^3 \approx 1+3x+3x^2$
 $(1+x)^4 \approx 1 + 4x + 6x^2$
 
 [//]: # (vim: tw=78:ts=8:sts=2:sw=2:ft=markdown:norl:)
-
-
 
