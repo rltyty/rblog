@@ -61,4 +61,4 @@ seo:
 ---
 
 [ETF Data](http://korhal.h4ck.me:8300)
-[RHUB](http://korhal.h4ck.me:8080/)
+<!-- [RHUB](http://korhal.h4ck.me:8080/) -->
