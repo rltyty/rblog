@@ -62,12 +62,25 @@ seo:
 
 ## Bitwise operations
 
-### NOT operation
+### NOT operation (`~`)
 
-Flip all bits: 0 -> 1, 1 -> 0. Therefore,
+Flip all bits: $0 \rightarrow 1$, $1 \rightarrow 0$. In a 32-bit system,
 
-$$x = \sim y \iff x + y \equiv 2^{32} - 1 \pmod{2^{32}}$$
+$$\sim x + x \equiv 2^{32} - 1 \pmod{2^{32}}$$
+### Negate (`-`)
 
+To negate a number $x$, computer does
+
+$$-x = \sim x + 1$$
+
+$$-x + x \equiv 2^{32} \equiv 0 \pmod{2^{32}}$$
+
+In Java, the range of `Integer` is $[-2^{31}, 2^{31}-1]$. Negating the most
+negative integer $-2^{31}$ overflows and wraps around to itself.
+
+```java
+- Integer.MIN_VALUE == Integer.MIN_VALUE
+```
 Mathematically, in 2's complement system,
 
 $$\sim x = - (x + 1)$$
@@ -81,19 +94,6 @@ $$\text{flip all bits = (negate and subtract 1) or (plus 1 and negate)} $$
    ~ 6  == -7
    ~ Integer.MIN_VALUE == Integer.MAX_VALUE
    ~ Integer.MAX_VALUE == Integer.MIN_VALUE 
-```
-
-### Negate integers
-
-To negate a number x, computers compute
-
-$$-x = \sim x + 1$$
-
-In Java, the range of Integer is $[-2^{31}, 2^{31}-1]$. Negating the most
-negative number $-2^{31}$ overflows and wraps around to itself.
-
-```java
-- Integer.MIN_VALUE == Integer.MIN_VALUE
 ```
 
 ### Two's complement
@@ -131,13 +131,13 @@ result is returned as a long in the range $[0, 2^{32}-1]$
 Integer.toUnsignedLong(x) = 0xffffffffL & x
 ```
 
-### Arithmetic shift ('>>') and logical shift ('>>>', '<<')
+### Arithmetic shift (`>>`) and logical shift (`>>>`, `<<`)
 
 There is only arithmetic right shift, no arithmetic left shift. Because the
 sign bit is the leftmost bit, whether replicate it to fill the new leftmost
 empty bit is only relevant to right shift.
 
-### Arithmetic right shift `>>`
+### Arithmetic right shift (`>>`)
 - Floored division, rounds toward -∞.
 - Preserves the sign.
 - Fills new leftmost with the sign bit.
@@ -161,7 +161,7 @@ Math.floorDiv(x, y) == Math.floor((double) x / y)
 -8 >> 1 == -4
 ```
 
-### Division '/'
+### Division (`/`)
 - Truncated division (fraction part truncated), rounds toward 0.
 - Preserves the sign
 
@@ -170,7 +170,7 @@ Math.floorDiv(x, y) == Math.floor((double) x / y)
 -7 / 4 = -1                 // truncate the fraction part
 ```
 
-### Logical right shift `>>>`
+### Logical right shift (`>>>`)
 
 - Always treats number as unsigned
 - Fills new leftmost with 0
@@ -183,7 +183,7 @@ Mathematically, `x >>> n` is equivalent to
 (x >= 0) ? x / (1 << n) : (int)(Integer.toUnsignedLong(x) / (1L << n))
 ```
 
-### Logical left shift `<<`
+### Logical left shift (`<<`)
 
 - Fills new rightmost with 0
 

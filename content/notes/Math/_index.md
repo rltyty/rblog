@@ -1,4 +1,4 @@
 ---
-title: "行测"
+title: "Math"
 wieight: 10
 ---

@@ -1,5 +1,5 @@
 ---
-title: "数量关系"
+title: "Basic Tests"
 subtitle: ""
 date: 2025-07-28T15:21:10+08:00
 lastmod: 2025-07-28T15:21:10+08:00
@@ -62,7 +62,7 @@ seo:
 
 # 数量关系
 
-[习题索引](http://korhal.h4ck.me:8080/RKB/职测资料/数量关系)
+[***📝习题索引***](http://korhal.h4ck.me:8080/RKB/职测资料/数量关系)
 
 ## 1 比例关系
 

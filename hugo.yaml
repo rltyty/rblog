@@ -47,10 +47,10 @@ menu:
       title: "rhub"
 params:
   defaultTheme: auto
-  gitRepo: "rltyty/rblog"
+  gitRepo: "rltyty/rbl"
   fingerprint: ""
   dateFormat: "2025-03-02"
-  title: Welcome to rblog!
+  title: 👋 Welcome to rblog!
   description: rblog and my knowledge base
   images:
     - /logo.png
@@ -111,7 +111,7 @@ params:
       gravatarEmail: ""
       avatarURL: "https://raw.githubusercontent.com/googlefonts/noto-emoji/refs/heads/main/svg/emoji_u1f989.svg"
       title: "☄️ 博客 | ☁️ 笔记 | 🌙 知识库 | 📱 分享"
-      subtitle: "____Hello, World!____"
+      subtitle: "____👋 Welcome to rblog! ____"
       typeit: true
       social: true
       disclaimer: ""
