@@ -72,7 +72,8 @@ params:
     title:
       logo: ""
       name: "rblog"
-      pre: ""
+      # pre: "<i class='far fa-kiss-wink-heart fa-fw' aria-hidden='true'></i>"
+      pre: "<i class='fa-solid fa-cat'></i>"
       post: ""
       typeit: false
   footer:
