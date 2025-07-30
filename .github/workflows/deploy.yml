@@ -1,0 +1,32 @@
+name: Deploy rblog (Hugo site)
+
+on:
+  push:
+    branches: [ dev ]  # or "master" or your deploy branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Setup Hugo
+      uses: peaceiris/actions-hugo@v2
+      with:
+        hugo-version: 'latest'
+
+    - name: Build Hugo site
+      run: hugo --minify
+
+    - name: Deploy via rsync
+      uses: burnett01/rsync-deployments@v2.0.0
+      with:
+        switches: -avz --delete
+        path: public/
+        remote_path: ${{ secrets.DEPLOY_PATH }}
+        remote_host: ${{ secrets.DEPLOY_HOST }}
+        remote_user: ${{ secrets.DEPLOY_USER }}
+        remote_key: ${{ secrets.DEPLOY_SSH_KEY }}
+
