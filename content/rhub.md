@@ -65,4 +65,7 @@ seo:
 [BBS24x7](https://github.com/rltyty/BBS24x7)
 
 [runit.nvim](https://github.com/rltyty/runit.nvim)
+
+[fzf-player](https://github.com/rltyty/fzf-player)
+
 <!-- [RHUB](http://korhal.h4ck.me:8080/) -->
