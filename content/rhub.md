@@ -68,4 +68,5 @@ seo:
 
 [fzf-player](https://github.com/rltyty/fzf-player)
 
+[vimtex-zathura](https://github.com/rltyty/vimtex-zathura)
 <!-- [RHUB](http://korhal.h4ck.me:8080/) -->
