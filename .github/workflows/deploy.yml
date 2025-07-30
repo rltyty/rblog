@@ -9,8 +9,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
+    - name: Checkout repo (with submodules)
       uses: actions/checkout@v4
+      with:
+        submodules: recursive  # ⬅️ this ensures theme submodule is also checked out
 
     - name: Setup Hugo
       uses: peaceiris/actions-hugo@v3
