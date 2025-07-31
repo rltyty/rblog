@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<title>Markmap</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+}
+html {
+  font-family: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+#mindmap {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+.markmap-dark {
+  background: #27272a;
+  color: white;
+}
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markmap-toolbar@0.18.12/dist/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/default.min.css">
+</head>
+<body>
+<svg id="mindmap"></svg>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script><script src="https://cdn.jsdelivr.net/npm/markmap-view@0.18.12/dist/browser/index.js"></script><script src="https://cdn.jsdelivr.net/npm/markmap-toolbar@0.18.12/dist/index.js"></script><script>((r) => {
+          setTimeout(r);
+        })(() => {
+  const { markmap, mm } = window;
+  const toolbar = new markmap.Toolbar();
+  toolbar.attach(mm);
+  const el = toolbar.render();
+  el.setAttribute("style", "position:absolute;bottom:20px;right:20px");
+  document.body.append(el);
+})</script><script>((getMarkmap, getOptions, root2, jsonOptions) => {
+              const markmap = getMarkmap();
+              window.mm = markmap.Markmap.create(
+                "svg#mindmap",
+                (getOptions || markmap.deriveOptions)(jsonOptions),
+                root2
+              );
+              if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                document.documentElement.classList.add("markmap-dark");
+              }
+            })(() => window.markmap,null,{"content":"C","children":[{"content":"IDE Neovim Lsp Configuration for a C project","children":[{"content":"generate compile_commands.json <a href=\"https://clangd.llvm.org/installation#compile_commandsjson\">1</a>","children":[{"content":"<pre data-lines=\"66,69\"><code class=\"language-sh\">make clean; bear -- make\n</code></pre>","children":[],"payload":{"tag":"pre","lines":"66,69"}}],"payload":{"tag":"h3","lines":"64,65"}},{"content":"generate .clang-format <a href=\"https://clang.llvm.org/docs/ClangFormat.html#standalone-tool\">2</a>","children":[{"content":"By default, <code>IndentWidth: 2</code>","children":[],"payload":{"tag":"h4","lines":"76,77"}}],"payload":{"tag":"h3","lines":"70,71"}}],"payload":{"tag":"h2","lines":"62,63"}},{"content":"Use gcc/clang to check &quot;include&quot; search pathes on both macOS and Linux","children":[{"content":"<pre data-lines=\"80,83\"><code class=\"language-sh\">gcc/clang -xc -E -v -\n</code></pre>","children":[],"payload":{"tag":"pre","lines":"80,83"}}],"payload":{"tag":"h2","lines":"78,79"}},{"content":"puts vs printf","children":[{"content":"<pre data-lines=\"92,106\"><code class=\"language-c\">    for (int i = 0; i &lt; loop; i++) {\n        puts(msg);\n    }\n\n    for (int i = 0; i &lt; loop; i++) {\n        printf(&quot;%s\\n&quot;, msg);\n    }\n\n/*\n * Profiling test_puts: 1000000 msg:[Messi]: Time used: 0.061672\n * Profiling test_printf: 1000000 msg:[Messi]: Time used: 0.061735\n */\n</code></pre>","children":[],"payload":{"tag":"pre","lines":"92,106"}}],"payload":{"tag":"h2","lines":"84,85"}},{"content":"Recursive call depth","children":[{"content":"<pre data-lines=\"113,120\"><code class=\"language-sh\"><span class=\"hljs-built_in\">ulimit</span> -s\n8192    (KBytes)\n\n<span class=\"hljs-built_in\">ulimit</span> -Hs\n65532   (KBytes)\n</code></pre>","children":[],"payload":{"tag":"pre","lines":"113,120"}}],"payload":{"tag":"h2","lines":"107,108"}},{"content":"ISO C","children":[{"content":"&lt;stdarg.h&gt; defined by C compiler GCC/Clang","children":[],"payload":{"tag":"h3","lines":"130,131"}}],"payload":{"tag":"h2","lines":"128,129"}},{"content":"grammar","children":[{"content":"keywords","children":[{"content":"restrict","children":[{"content":"since <code>C99</code>","children":[],"payload":{"tag":"li","lines":"141,142"}},{"content":"a contract between the programmer and the compiler","children":[],"payload":{"tag":"li","lines":"142,143"}},{"content":"applies only to pointers, promises the compiler the pointer is the only way<br>\nto access the memory it points to during its lifetime (i.e., no other<br>\npointers alias the same memory).","children":[],"payload":{"tag":"li","lines":"143,146"}},{"content":"common usage: memcpy(3), stat(2)","children":[],"payload":{"tag":"li","lines":"146,148"}}],"payload":{"tag":"h4","lines":"139,140"}}],"payload":{"tag":"h3","lines":"137,138"}},{"content":"typedef","children":[{"content":"function pointer type","children":[{"content":"<pre data-lines=\"159,162\"><code class=\"language-c\">int (*fp) (const char*, int*);\n</code></pre>","children":[],"payload":{"tag":"pre","lines":"159,162"}},{"content":"<pre data-lines=\"165,169\"><code class=\"language-c\">typedef int Myfunc(const char*, int*);\nMyfunc fp;\n</code></pre>","children":[],"payload":{"tag":"pre","lines":"165,169"}}],"payload":{"tag":"h4","lines":"153,154"}}],"payload":{"tag":"h3","lines":"151,152"}}],"payload":{"tag":"h2","lines":"135,136"}}]},null)</script>
+</body>
+</html>
