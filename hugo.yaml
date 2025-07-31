@@ -21,30 +21,30 @@ menu:
       identifier: notes
       pre: ""
       post: ""
-      name: 笔记
+      name: Notes
       url: /notes/
       title: ""
     - weight: 2
       identifier: tags
       pre: ""
       post: ""
-      name: 标签
+      name: Tags
       url: /tags/
       title: ""
     - weight: 3
       identifier: categories
       pre: ""
       post: ""
-      name: 分类
+      name: Categories
       url: /categories/
       title: ""
     - weight: 4
-      identifier: rhub
+      identifier: toolbox
       pre: ""
       post: ""
-      name: 其它
-      url: /rhub/
-      title: "rhub"
+      name: Toolbox
+      url: /toolbox/
+      title: "Toolbox"
     - weight: 6
       identifier:: "github"
       pre: "<i class='fab fa-github fa-fw' aria-hidden='true'></i>"
@@ -94,7 +94,7 @@ params:
     dateFormat: 01-02
     rss: 10
   app:
-    title: 我的博客知识库
+    title: My CMS
     noFavicon: false
     svgFavicon: ""
     themeColor: '#ffffff'
@@ -119,8 +119,8 @@ params:
       enable: true
       gravatarEmail: ""
       avatarURL: "https://raw.githubusercontent.com/googlefonts/noto-emoji/refs/heads/main/svg/emoji_u1f989.svg"
-      title: "☄️ 博客 | ☁️ 笔记 | 🌙 知识库 | 📱 分享"
-      subtitle: "____👋 你好! ____"
+      title: "📜Blog | 📒 Notes | 🧰Tools | 🪐 Space"
+      subtitle: "____👋 Hi! ____"
       typeit: true
       social: true
       disclaimer: ""
