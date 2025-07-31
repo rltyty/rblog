@@ -66,16 +66,18 @@ A method to latex edit and preview side by side
 
 ## Purpose
 
-This is about how to co-work between zathura, synctex and vimtex.
+This is about how to integrate Zathura, SyncTeX, and VimTeX for a smooth
+LaTeX editing experience.
 
-To use Vim + vimtex plugin + a document viewer with [synctex][2] support, so I
-can get instant view updates of the PDF alongside while I'm editing a tex
-script. Skim (a PDF viewer on macOS) is great, fast and works out of box.
-However, it is built around Apple's PDFKit which doesn't support recolor of
-the page background. What I want is to change the viewer's bg color from white
-to some dark color, especially the same as my Vim's(like this). Zathura can
-make this happen, except that no pre-built package for macOS and its source
-doesn't ship with synctex. That's why I need some hacks.
+I use Vim with the VimTeX plugin and a document viewer that supports
+[SyncTeX][2], so I can see live PDF updates as I edit my .tex files.
+Skim (a PDF viewer on macOS) is fast, works out of the box, and supports
+SyncTeX. However, it’s built on Apple’s PDFKit, which doesn’t allow changing
+the background color of pages—something I want, especially to match the dark
+background of my Vim setup. Zathura supports custom background colors and
+would be ideal, but it has no pre-built package for macOS, and its source
+doesn’t include SyncTeX support by default. That’s why some workarounds are
+necessary.
 
 ![Screenshot](./images/vimtex_zathura.png)
 
@@ -102,13 +104,14 @@ doesn't ship with synctex. That's why I need some hacks.
 
 
 ## Hack Zathura build script to link libsynctex.a
-1. Follow the instructions of https://pwmt.org/projects/zathura/installation/ to build zathura and the dependencies.  
+1. Follow the instructions of https://pwmt.org/projects/zathura/installation/
+to build zathura and the dependencies.  
     Note: No synctex support by now. Check the zathura binary file,
 
              nm zathura | grep synctex | wc -l
              11
 
-2. Put the synctex source folder in Zathura's source folder, e.g. zathura-0.4.5/zathura/synctex.
+2. Put the synctex source folder in Zathura's source folder, e.g. `zathura-0.4.5/zathura/synctex`.
 3. Hack meson.build, to add synctex support.
     Insert the following two lines before "if synctex.found()"
     build_dependencies += synctex
@@ -116,7 +119,7 @@ doesn't ship with synctex. That's why I need some hacks.
     if synctex.found()
 4. Remove and recreate "build" folder and redo "meson build"
 5. Hack build/build.ninja, to link libsynctex.a.  
-   Edit L240, LINK_ARGS of the zathura target, add -L<path of zathura-0.4.5>/zathura/synctex -lsynctex:
+   Edit L240, LINK_ARGS of the zathura target, add `-L<path of zathura-0.4.5>/zathura/synctex -lsynctex`:
 
        LINK_ARGS = -Wl,-dead_strip_dylibs -Wl,-undefined,error -Wl,-headerpad_max_install_names libzathura.a -L<path of zathura-0.4.5>/zathura/synctex -lsynctex ...
 
