@@ -65,7 +65,7 @@ params:
   author:
     name: RLTYTY
     email: ""
-    link: ""
+    link: "https://github.com/rltyty"
   header:
     desktopMode: fixed
     mobileMode: auto
