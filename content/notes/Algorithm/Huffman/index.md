@@ -10,8 +10,8 @@ description: ""
 license: ""
 images: []
 
-tags: []
-categories: []
+tags: ['Algorithm']
+categories: ['IT']
 
 featuredImage: ""
 featuredImagePreview: ""
