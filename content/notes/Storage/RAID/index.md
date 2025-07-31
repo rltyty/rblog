@@ -1,8 +1,8 @@
 ---
 title: "RAID"
 subtitle: ""
-date: 2025-07-31T23:51:26+08:00
-lastmod: 2025-07-31T23:51:26+08:00
+date: 2025-08-01T00:14:45+08:00
+lastmod: 2025-08-01T00:14:45+08:00
 draft: false
 author: "rltyty"
 authorLink: ""
@@ -105,13 +105,13 @@ RAID 5 doesn't replicate data in the sense of making an identical copy; it
 uses a more efficient mathematical calculation to allow for data recovery from
 a single disk failure.
 
-$$\\text{Disk usable capacity} = (N-1) \\times \\text{(size of smallest disk)}$$
+$$\text{Disk usable capacity} = (N-1) \times \text{(size of smallest disk)}$$
 
 - Parity calculation:
 
-$$ A \\oplus B = P$$
-$$ A \\oplus P = B$$
-$$ P \\oplus B = A$$
+$$ A \oplus B = P$$
+$$ A \oplus P = B$$
+$$ P \oplus B = A$$
 
 `XOR` $\\oplus$ table
 |A |B |P|
@@ -121,10 +121,11 @@ $$ P \\oplus B = A$$
 |1 |0 |1|
 |1 |1 |0|
 
-As long as $N \\ge 3$, any one disk fails, any block on that disk can be
+
+As long as $N \ge 3$, any one disk fails, any block on that disk can be
 calculated from all the other disks. For example, A, B, C, D blocks are
-across 4 disks, $P=A \\oplus B \\oplus C \\oplus D$, when the disk contains C
-fails, C can be calculated by $C=P \\oplus A \\oplus B \\oplus D$.
+across 4 disks, $P=A \oplus B \oplus C \oplus D$, when the disk contains C
+fails, C can be calculated by $C=P \oplus A \oplus B \oplus D$.
 
 ### RAID 6
 
