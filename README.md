@@ -1,2 +1,2 @@
 # rblog
-My personal CMS
+My CMS
