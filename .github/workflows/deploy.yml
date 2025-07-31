@@ -19,10 +19,17 @@ jobs:
       with:
         hugo-version: 'latest'
 
-    - name: Prepare static mindmaps
+    - name: Copy mindmaps to static/mindmaps
       run: |
-        mkdir -p static/notes
-        find content/notes -maxdepth 1 -name '*.html' -exec mv {} static/notes/ \;
+        mkdir -p static/mindmaps
+        find content/notes -name '*.html' -exec bash -c '
+          for path; do
+            rel="${path#content/notes/}"
+            dest="static/mindmaps/$rel"
+            mkdir -p "$(dirname "$dest")"
+            cp "$path" "$dest"
+          done
+        ' bash {} +
 
     - name: Build Hugo site
       run: hugo --minify
