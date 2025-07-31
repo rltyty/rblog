@@ -175,4 +175,3 @@ complex types in C.
 [1]: https://clangd.llvm.org/installation#compile_commandsjson
 [2]: https://clang.llvm.org/docs/ClangFormat.html#standalone-tool
 
-[Mindmap]( /mindmaps/apue/c.html )

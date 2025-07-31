@@ -31,6 +31,17 @@ jobs:
           done
         ' bash {} +
 
+    - name: Append mindmap links (safely)
+      run: |
+        find content/notes -name '*.html' | while read html; do
+          md="${html%.html}.md"
+          if [ -f "$md" ]; then
+            rel="${html#content/notes/}"
+            link="[🧠 View Mindmap](/mindmaps/$rel)"
+            grep -qxF "$link" "$md" || echo -e "\n$link" >> "$md"
+          fi
+        done
+
     - name: Build Hugo site
       run: hugo --minify
 
