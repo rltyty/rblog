@@ -113,7 +113,7 @@ $$ A \oplus B = P$$
 $$ A \oplus P = B$$
 $$ P \oplus B = A$$
 
-`XOR` $\\oplus$ table
+`XOR` $\oplus$ table
 |A |B |P|
 |-------|-------|-|
 |0 |0 |0|
