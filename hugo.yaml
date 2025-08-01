@@ -55,8 +55,8 @@ menu:
 
 params:
   defaultTheme: auto
-  gitRepo: "rltyty/rblog"
-  fingerprint: ""
+  gitRepo: "https://github.com/rltyty/rblog"
+  fingerprint: "sha512"
   dateFormat: "2025-03-02"
   title: 👋 Welcome to rblog!
   description: rblog and my knowledge base
