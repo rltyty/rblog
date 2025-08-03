@@ -63,6 +63,9 @@ seo:
 <!--more-->
 ## Hadoop
 
+Big Data computation & storag, distributed data processing (MapReduce, YARN,
+HDFS, etc.)
+
 ### Hadoop Eco System
 
 ![Hadoop Eco System](./images/HadoopEcoSystem.png)
@@ -133,6 +136,10 @@ Analogy:
 
 ![YARN Architecture](./images/yarn_architecture.gif)
 
+#### Compared with Apache Mesos
+Mesos: General-purpose resource allocation across many applications.
+[Mesos](mesos.pdf)
+
 #### HDFS (NameNode and DataNodes)
 
 An analogy is to consider NameNode as inode (Unix/Linux File System),
@@ -168,7 +175,6 @@ replication as RAID.
 
 - Ambari, Cloudera Manager agents
 - Hosts BI tools (like Tableau, Power BI) that query Hadoop data.
-
 
 ### Hadoop Cluster Size
 
