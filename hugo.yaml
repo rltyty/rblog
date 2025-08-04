@@ -19,7 +19,7 @@ menu:
   main:
     - weight: 1
       identifier: notes
-      pre: ""
+      pre: "<i class='fa-solid fa-book'></i>"
       post: ""
       name: Notes
       url: /notes/
@@ -27,24 +27,24 @@ menu:
     - weight: 2
       identifier: tags
       pre: ""
-      post: ""
+      post: "<i class='fa-solid fa-tag'></i>"
       name: Tags
       url: /tags/
       title: ""
     - weight: 3
       identifier: categories
-      pre: ""
+      pre: "<i class='fa-solid fa-list'></i>"
       post: ""
       name: Categories
       url: /categories/
       title: ""
     - weight: 4
       identifier: toolbox
-      pre: ""
+      pre: "<i class='fa-solid fa-wrench'></i>"
       post: ""
-      name: Toolbox
+      name: "rTools"
       url: /toolbox/
-      title: "Toolbox"
+      title: "rTools"
     - weight: 6
       identifier:: "github"
       pre: "<i class='fab fa-github fa-fw' aria-hidden='true'></i>"
