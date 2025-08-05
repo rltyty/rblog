@@ -60,7 +60,7 @@ seo:
   # ...
 ---
 
-[ETF Data](http://korhal.h4ck.me:8300)
+[ETF Data](http://korhal.h4ck.me:18300)
 
 [BBS24x7](https://github.com/rltyty/BBS24x7)
 
