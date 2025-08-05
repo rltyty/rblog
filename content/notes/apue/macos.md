@@ -146,3 +146,18 @@ dyld-shared-cache-extractor dyld_shared_cache_x86_64 ~/tmp/libs
 ~/tmp/libs/usr/lib/system/libsystem_pthread.dylib
 ```
 
+## Service Manager
+
+
+| Concept                       | **Linux**                 | **macOS**                                                                 |
+| ----------------------------- | ------------------------- | ------------------------------------------------------------------------- |
+| Init system / Service manager | `systemd`                 | `launchd`                                                                 |
+| CLI tool                      | `systemctl`               | `launchctl`                                                               |
+| Service definition            | `*.service` unit files    | `*.plist` property list files                                             |
+| User service location         | `~/.config/systemd/user/` | `~/Library/LaunchAgents/`                                                 |
+| System service location       | `/etc/systemd/system/`    | `/Library/LaunchDaemons/`                                                 |
+| Starts at boot                | `systemctl enable`        | Auto-loaded based on `plist` location and `RunAtLoad` or `KeepAlive` keys |
+| Start/stop manually           | `systemctl start/stop`    | `launchctl start/stop`                                                    |
+| List services                 | `systemctl list-units`    | `launchctl list`                                                          |
+
+
