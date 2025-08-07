@@ -10,7 +10,7 @@ description: ""
 license: ""
 images: []
 
-tags: ['Utils']
+tags: ['Utils', 'Unix']
 categories: ['IT']
 
 featuredImage: ""

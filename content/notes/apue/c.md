@@ -10,7 +10,7 @@ description: ""
 license: ""
 images: []
 
-tags: ['C']
+tags: ['C', 'Unix']
 categories: ['IT']
 
 featuredImage: ""
@@ -149,9 +149,37 @@ internals and ABI-specific details. So the compiler (GCC/Clang) provides it.
 With `restrict` the compiler can assure no aliasing, enabling aggressive
 optimization (e.g., reordering instructions, cache values in registers).
 
-### typedef
+#### `sizeof`
 
-#### function pointer type
+```c
+int a[108];
+assert(432 == sizeof(a));
+assert(8 == sizeof(&a[0]); // the address of the 1st element, a pointer type
+```
+
+When an array is in an expression or passed to a function, it is decayed to a
+pointer.
+
+```c
+int a[108];
+assert(8 == sizeof(a+1))
+
+void f(int a[]) {
+  assert(8 == sizeof(a))
+}
+```
+Compiler will show warnings for the two usages above ("-Wsizeof-array-decay",
+"-Wsizeof-array-argument")
+
+Thus, use pointer instead of array as function parameter.
+
+```c
+void f(int *a) { ; }
+```
+
+#### `typedef`
+
+##### function pointer type
 
 Instead of use the below line to define a function pointer that points to
 a function returns a value of `int` type and accepts parameters of type
@@ -171,6 +199,123 @@ Myfunc fp;
 This separates the definition of the function pointer type from the
 declaration of variables of that type, which is a common best practice for
 complex types in C.
+
+### Array declaration and initialization
+
+```c
+int numbers[5] = {10, 20, 30, 40, 50}; // Full initialization
+int numbers[5] = {10, 20}; // Partial (rest zero-initialized)
+int numbers[] = {10, 20, 30}; // Omitted size (compiler determines)
+int numbers[5] = {[2] = 30, [0] = 10}; // Designated initializers (C99+)
+```
+
+In C, there is no `new` like C++, `int a[]` is used for declaring an array
+whose size is determined at compile time. Compilation error occurs in below
+code.
+```c
+// int a[] = calloc(size, sizeof(int));    // ❌ WRONG!
+```
+
+Dynamic allocation using pointer to refer to the address.
+
+```c
+int *a = (int *)calloc(size, sizeof(int));
+
+if (a == NULL) {
+  return EXIT_FAILURE;
+}
+
+for (int i = 0; i < size; i++) {
+  printf("%d ", a[i]); // Access elements using array-like indexing
+}
+printf("\n");
+
+free(a);
+```
+
+Similarly in C++,
+
+```c++
+// int a[] = new int[5];        // ❌ WRONG!
+int *a = new int[5];            // uninitialized
+int *a = new int[5]();          // zero-initialized
+int *a = new int[5]{};          // zero-initialized
+
+delete[] a;                     // match: new - delete, malloc/calloc - free
+a = nullptr;
+```
+
+## Library functions
+
+### `malloc(3)`, `calloc(3)`, `realloc(3)`, `free(3)`
+
+```c
+#include <stdlib.h>
+
+void *
+malloc(size_t size);                // garbage values unless memset
+                                    // raw memory, full control by yourself
+
+void *
+calloc(size_t count, size_t size);  // zero-initialized, e.g. array, struct or
+                                    // buffer
+
+void *
+realloc(void *ptr, size_t size);    // if ptr != NULL and size == 0, ~ free(ptr)
+                                    // if ptr == NULL, ~ malloc(size)
+                                    // if size < original, memory shrunk, but
+                                    // the returned pointer might not be the
+                                    // same as the passed-in ptr
+                                    // if ptr points to memory allocated by
+                                    // calloc, extended memory is not
+                                    // guaranteed zero-initialized
+
+void
+free(void *ptr);                    // get the size from allocator metadata
+```
+
+
+#### Allocation Metadata
+
+The actual memory allocated is a bit larger than the requested amount for save
+the metadata. `free(3)` can use `ptr` returned by `malloc(3)`, `calloc(3)` and
+`realloc(3)` to compute the metadata address, where the size is retrieved to
+collect the memory allocated.
+
+    +-------------------------------------------------+
+    |  Allocator Metadata (e.g., size, status, etc.)  |
+    +-------------------------------------------------+
+    |                 Usable Memory Block             | <-- `ptr` points here
+    |                 (your requested `size` bytes)   |
+    +-------------------------------------------------+
+
+#### `realloc(3)
+
+Even if memory is shrunk when the size passed to `realloc(3)` is smaller than
+the original size, the returned pointer might not be the same as the `ptr`
+passed to `realloc(3)`. Thus,
+
+- Bad practice
+
+```c
+// BAD practice: risk of memory leak if realloc fails
+// ptr = realloc(ptr, new_size); // If realloc fails and returns NULL, original ptr is lost!
+```
+
+- Godd practice
+```c
+// GOOD practice:
+void *temp_ptr = realloc(ptr, new_size);
+if (temp_ptr == NULL && new_size != 0) { // realloc(ptr, 0) is like free, returns NULL
+    // Reallocation failed, original ptr is still valid and unchanged
+    perror("realloc failed");
+    // Handle error, maybe free original_ptr here or keep using it
+} else {
+    // Reallocation succeeded, update your pointer
+    ptr = temp_ptr;
+}
+```
+
 
 [1]: https://clangd.llvm.org/installation#compile_commandsjson
 [2]: https://clang.llvm.org/docs/ClangFormat.html#standalone-tool

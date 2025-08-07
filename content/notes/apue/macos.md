@@ -10,7 +10,7 @@ description: ""
 license: ""
 images: []
 
-tags: ['macOS']
+tags: ['macOS', 'Unix']
 categories: ['IT']
 
 featuredImage: ""
