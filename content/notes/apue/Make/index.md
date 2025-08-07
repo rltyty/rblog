@@ -1,5 +1,5 @@
 ---
-title: "Make"
+title: "Notes on make and Makefile"
 subtitle: ""
 date: 2025-08-07T23:29:08+08:00
 lastmod: 2025-08-07T23:29:08+08:00
@@ -10,7 +10,7 @@ description: ""
 license: ""
 images: []
 
-tags: ['make', 'build']
+tags: ['Make', 'Build']
 categories: ['IT']
 
 featuredImage: ""
