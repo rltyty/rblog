@@ -1,8 +1,8 @@
 ---
-title: "Install_R_on_Conda"
+title: "Install via Conda"
 subtitle: ""
-date: 2025-08-08T13:31:34+08:00
-lastmod: 2025-08-08T13:31:34+08:00
+date: 2025-08-08T16:03:42+08:00
+lastmod: 2025-08-08T16:03:42+08:00
 draft: false
 author: "rltyty"
 authorLink: ""
@@ -10,8 +10,8 @@ description: ""
 license: ""
 images: []
 
-tags: ['Conda', 'R']
-categories: ['IT']
+tags: []
+categories: []
 
 featuredImage: ""
 featuredImagePreview: ""
@@ -65,8 +65,11 @@ seo:
 ### Install: `conda install r-base`
 #### [Optional]: `conda install pandoc`
 ### Run R: `R`
-### Choose nearest mirror to download packages: `chooseCRANMirror()`
-### To use rmarkdown in R: `install.packages("rmarkdown")`
+### Install `rmarkdown`
+#### Choose nearest mirror to download packages: `chooseCRANMirror()`
+#### To use rmarkdown in R: `install.packages("rmarkdown")`
+#### Use conda to install R package, from conda-forge (Suggested)
+##### `conda install -c conda-forge r-rmarkdown`
 ### To export PDF document from R:
 #### `install.packages("tinytex")`
 #### `tinytex::install_tinytex()`

@@ -1,0 +1,14 @@
+name: aistudy
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.12
+  - jupyterlab
+  - r-base
+  - r-essentials
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - r-irkernel

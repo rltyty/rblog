@@ -1,8 +1,8 @@
 ---
 title: "Conda Basic"
 subtitle: ""
-date: 2025-07-28T15:21:10+08:00
-lastmod: 2025-07-28T15:21:10+08:00
+date: 2025-08-08T15:10:36+08:00
+lastmod: 2025-08-08T15:10:36+08:00
 draft: false
 author: "rltyty"
 authorLink: ""
@@ -60,6 +60,7 @@ seo:
   # ...
 ---
 
+<!--more-->
 ## Miniconda3 (suggested)
 [getting-started](https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html)
 
@@ -68,13 +69,14 @@ seo:
 - List environments
 ```sh
 conda info -e
+# or
+conda env list
 ```
 
 - Activate base environment
 ```sh
-actconda
+actconda # personal alias
 ```
-NOTE: `actconda` is an alias
 
 ```sh
 actconda='eval "$(/home/rbach/rbox.local/var/miniconda3/bin/conda shell.zsh hook)"'
@@ -94,3 +96,42 @@ conda activate aistudy
 ```sh
 conda create -n aistudy python=3.11
 ```
+
+- Create an environment from a configuration file
+
+```sh
+conda env create -f aistudy.yml
+```
+
+[aistudy.yml](./aistudy.yml)
+
+```yaml
+name: aistudy
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.12
+  - jupyterlab
+  - r-base
+  - r-essentials
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - r-irkernel
+```
+
+- Remove an environment
+
+```sh
+conda env remove -n aistudy
+```
+
+- List all packages in the current environment
+
+```sh
+conda list
+```
+
+
