@@ -10,8 +10,8 @@ description: ""
 license: ""
 images: []
 
-tags: []
-categories: []
+tags: ['Conda', 'R']
+categories: ['IT']
 
 featuredImage: ""
 featuredImagePreview: ""
