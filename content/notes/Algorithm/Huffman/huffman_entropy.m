@@ -5,7 +5,7 @@ h_len = length(h_encoding)
 
 bits_per_symbol = h_len / p_len
 
-E = entropy_calc(plaintext)
+E = entropy_calc(plaintext);
 
 fprintf("Huffman Encoding: [%f] bits/symbol.\n", bits_per_symbol)
 fprintf("Entropy of the plain text: [%f] bits.\n", E)
