@@ -83,5 +83,6 @@ seo:
     "pdf_document"
     "word_document"
     "all" (renders all formats specified in the YAML header)
-#### Or in command line: `Rscript -e "rmarkdown::render('ex1.rmd')"`
+### Render in command line: `Rscript -e "rmarkdown::render('ex1.rmd')"`
 ### Example output: [ex1.pdf](./ex1.pdf)
+
