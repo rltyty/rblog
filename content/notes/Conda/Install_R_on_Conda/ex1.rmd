@@ -1,0 +1,159 @@
+---
+title: "One Sample t-Test"
+output: pdf_document
+---
+
+```{r}
+wang_class <- c(
+  136, 136, 134, 136, 131, 133, 142, 146, 137, 140,
+  134, 135, 136, 132, 119, 132, 145, 131, 140, 141
+)
+t.test(wang_class, mu = 137, alternative = "two.sided")
+t.test(wang_class, mu = 137, alternative = "greater")
+t.test(wang_class, mu = 137, alternative = "less")
+```
+
+## Interpretation of Results
+
+### 1. One Sample t-test (two-sided)
+
+```
+data: wang_class
+t = -0.90834, df = 19, p-value = 0.3751
+alternative hypothesis: true mean is not equal to 137
+95 percent confidence interval:
+ 133.0349 138.5651
+sample estimates:
+mean of x
+ 135.8
+```
+
+- **p-value**: Since the p-value (0.3751) is greater than the common
+  significance level (e.g., 0.05), we fail to reject the null hypothesis.
+  This means there is no significant evidence to conclude that the true
+  mean of the population is **different from** 137.
+
+- **Critical Value**: At the common significance level (e.g., 0.05),
+  with $df = 19$, the critical value from the t-table for a two-tailed
+  t-test is $t_{critical} = \pm 2.093$. The calculated sample
+  $t_{statistic} = -0.90834$ (under the assumption that the true mean
+  is 137) satisfies $|t_{statistic}| < t_{critical}$. This indicates
+  $t_{statistic}$ does not fall into the rejection region, meaning we
+  fail to reject the null hypothesis. However, this does not mean we
+  accept the null hypothesis; it simply means there is insufficient
+  evidence to reject it.
+
+- **Confidence Interval**: The 95% confidence interval
+  $[133.0349, 138.5651]$ includes the hypothesized population mean of
+  137. This supports the conclusion that we fail to reject the null
+  hypothesis at the 5% significance level.
+
+### 2. One Sample t-test (right-sided)
+
+```
+data:  wang_class
+t = -0.90834, df = 19, p-value = 0.8125
+alternative hypothesis: true mean is greater than 137
+95 percent confidence interval:
+ 133.5157      Inf
+sample estimates:
+mean of x
+ 135.8
+```
+- **p-value**: Since the p-value (0.8125) is greater than the common
+  significance level (e.g., 0.05), we fail to reject the null hypothesis.
+  This means there is no significant evidence to conclude that the true
+  mean of the population is **greater than** 137.
+
+- **Critical Value**: At the common significance level (e.g., 0.05),
+  with $df = 19$, the critical value from the t-table for a right-tailed
+  t-test is $t_{critical} = 1.729$. The calculated sample
+  $t_{statistic} = -0.90834$ (under the assumption that the true mean
+  is 137) satisfies $t_{statistic} < t_{critical}$. This indicates
+  $t_{statistic}$ does not fall into the rejection region, meaning we
+  fail to reject the null hypothesis. However, this does not mean we
+  accept the null hypothesis; it simply means there is insufficient
+  evidence to conclude that the population mean is **greater than** 137.
+
+- **Confidence Interval**: The 95% confidence interval
+  $[133.5157, \infty]$ includes the hypothesized population mean of 137.
+  This supports the conclusion that we fail to reject the null hypothesis
+  at the 5% significance level. Additionally, since the interval extends
+  to negative infinity, it further indicates that there is no evidence to
+  suggest the true mean is **greater than** 137.
+
+### 3. One Sample t-test (left-sided)
+
+```
+data:  wang_class
+t = -0.90834, df = 19, p-value = 0.1875
+alternative hypothesis: true mean is less than 137
+95 percent confidence interval:
+     -Inf 138.0843
+sample estimates:
+mean of x
+    135.8
+```
+
+- **p-value**: Since the p-value (0.1875) is greater than the common
+  significance level (e.g., 0.05), we fail to reject the null hypothesis.
+  This means there is no significant evidence to conclude that the true
+  mean of the population is **less than** 137.
+
+- **Critical Value**: At the common significance level (e.g., 0.05),
+  with $df = 19$, the critical value from the t-table for a left-tailed
+  t-test is $t_{critical} = -1.729$. The calculated sample
+  $t_{statistic} = -0.90834$ (under the assumption that the true mean
+  is 137) satisfies $t_{statistic} > - t_{critical}$. This indicates
+  $t_{statistic}$ does not fall into the rejection region, meaning we
+  fail to reject the null hypothesis. However, this does not mean we
+  accept the null hypothesis; it simply means there is insufficient
+  evidence to conclude that the population mean is **less than** 137.
+
+- **Confidence Interval**: The 95% confidence interval
+  $[-\infty, 138.0843]$ includes the hypothesized population mean of 137.
+  This supports the conclusion that we fail to reject the null hypothesis
+  at the 5% significance level. Additionally, since the interval extends
+  to negative infinity, it further indicates that there is no evidence to
+  suggest the true mean is **less than** 137.
+
+### Summary of Analysis
+
+#### 1. p-value
+
+Compare the p-value with the significance level ($\alpha$, commonly $0.05$).
+
+- If $p > \alpha$, the result is insignificant, and we fail to reject
+  the null hypothesis.
+
+- If $p \le \alpha$, the result is significant, and we reject the null
+  hypothesis.
+
+#### 2. Critical Value
+
+Compare the calculated t-statistic with the critical value (from the
+t-distribution table, based on degrees of freedom, DF, significance level,
+type of the t-test).
+
+- If the t-statistic does not fall into the rejection region, then we fail
+  to reject the null hypothesis.
+
+  - two-sided t-test: $|t_{statistic}| < t_{critical}$
+
+  - right-sided t-test: $t_{statistic} < t_{critical}$
+
+  - left-sided t-test: $t_{statistic} > - t_{critical}$
+
+- Otherwise, we reject the null hypothesis.
+
+#### 3. Confidence Interval
+
+Examine whether the hypothesized population mean falls within the
+confidence interval.
+
+- If the hypthesized population mean is included, we fail to reject the
+  null hypothesis.
+
+- Otherwise, we reject the null hypothesis.
+
+
