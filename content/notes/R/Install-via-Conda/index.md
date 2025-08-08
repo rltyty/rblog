@@ -10,8 +10,8 @@ description: ""
 license: ""
 images: []
 
-tags: []
-categories: []
+tags: ['R', 'Statistics']
+categories: ['IT']
 
 featuredImage: ""
 featuredImagePreview: ""
