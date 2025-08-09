@@ -1,5 +1,5 @@
 ---
-title: "Ch7 Procenv"
+title: "Ch07 Process Environment"
 subtitle: ""
 date: 2025-08-06T07:31:43+08:00
 lastmod: 2025-08-06T07:31:43+08:00

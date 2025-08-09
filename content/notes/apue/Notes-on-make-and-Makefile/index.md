@@ -60,9 +60,6 @@ seo:
   # ...
 ---
 
-## Notes on `make` and Makefile
-
-
 ### Run make without echoing commands
 
 ```sh

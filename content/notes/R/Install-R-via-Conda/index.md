@@ -1,5 +1,5 @@
 ---
-title: "Install via Conda"
+title: "Install R via Conda"
 subtitle: ""
 date: 2025-08-08T16:03:42+08:00
 lastmod: 2025-08-08T16:03:42+08:00

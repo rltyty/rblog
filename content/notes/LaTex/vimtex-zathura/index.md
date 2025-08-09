@@ -61,7 +61,8 @@ seo:
 ---
 
 <!--more-->
-# vimtex-zathura
+# Vimtex-Zathura
+
 A method to latex edit and preview side by side
 
 ## Purpose

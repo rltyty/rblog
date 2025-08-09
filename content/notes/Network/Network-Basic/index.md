@@ -1,5 +1,5 @@
 ---
-title: "Netbasic"
+title: "Network Basic"
 subtitle: ""
 date: 2025-08-05T12:21:07+08:00
 lastmod: 2025-08-05T12:21:07+08:00

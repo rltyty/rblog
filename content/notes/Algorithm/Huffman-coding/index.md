@@ -1,5 +1,5 @@
 ---
-title: "Huffman"
+title: "Huffman coding"
 subtitle: ""
 date: 2025-07-31T23:39:17+08:00
 lastmod: 2025-07-31T23:39:17+08:00
@@ -61,14 +61,14 @@ seo:
 ---
 
 <!--more-->
-## Huffman Coding
+## Huffman coding
 
 ### construction of minimum weighted binary coding tree
 
 To find a binary coding tree with minimum weighted path length from the root,
 where the weight means the estimated frequency of occurrence.
 
-![Huffman Coding](./images/Huffman_coding_visualisation.svg.png)
+![Huffman coding](./images/Huffman_coding_visualisation.svg.png)
 
 **Shannon's Source Coding Theorem** states that for any lossless compression:
 $$H \le L \lt H+1$$
