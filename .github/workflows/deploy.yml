@@ -22,14 +22,20 @@ jobs:
 
     - name: Copy mindmaps to static/mindmaps
       run: |
-        mkdir -p static/mindmaps
-        # find content/notes -name '*.html' -exec bash -c '
-        find content/notes -type f \( -name '*.html' -o -name '*.pdf' -o -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' -o -name '*.svg' \) -exec bash -c '
+        find content/notes -name '*.html' -exec bash -c '
           for path; do
-            rel="${path#content/notes/}"
-            dest="static/mindmaps/$rel"
-            mkdir -p "$(dirname "$dest")"
-            cp "$path" "$dest"
+            dir="$(dirname "$path")"
+            rel_dir="${dir#content/notes/}"
+            mkdir -p "static/mindmaps/$rel_dir"
+            # Copy the HTML file
+            cp "$path" "static/mindmaps/$rel_dir"
+            # Copy all referenced files from the same directory
+            find "$dir" -maxdepth 1 -type f -name '*.pdf' -exec cp {} "static/mindmaps/$rel_dir/" \;
+            # Copy the entire "images/" subdirectory if it exists
+            if [ -d "$dir/images" ]; then
+              mkdir -p "static/mindmaps/$rel_dir/images"
+              cp -r "$dir/images/." "static/mindmaps/$rel_dir/images/"
+            fi
           done
         ' bash {} +
 
