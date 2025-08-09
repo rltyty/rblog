@@ -117,6 +117,7 @@ params:
     rss: 10
     profile:
       enable: true
+      banner: "images/maintheme.png"
       gravatarEmail: ""
       avatarURL: "https://raw.githubusercontent.com/googlefonts/noto-emoji/refs/heads/main/svg/emoji_u1f989.svg"
       title: "📜Blog | 📒 Notes | 🧰Tools | 🪐 Space"
@@ -259,7 +260,8 @@ params:
         lightTheme: light
         darkTheme: dark
     library:
-      css: {}
+      css:
+        customCSS: "css/custom.css"
       js: {}
     seo:
       images: []

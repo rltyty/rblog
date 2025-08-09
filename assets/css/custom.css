@@ -1,0 +1,16 @@
+/* Basic banner styling */
+.banner-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;  /* Ensures image covers container */
+  border-radius: 8px; /* Optional rounded corners */
+  margin: 0 auto;     /* Centers the image */
+  display: block;     /* Removes extra space below image */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .banner-image {
+    max-height: 250px;
+  }
+}
