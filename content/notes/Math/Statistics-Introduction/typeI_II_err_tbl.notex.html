@@ -1,0 +1,42 @@
+<head>
+    <title>Type I and II error table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            <!--width: 100%-->
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<table>
+    <!-- Table Head -->
+    <thead>
+        <tr>
+            <th rowspan="2" colspan="2">Table of error types</th>
+            <th colspan="2">Null hypothesis (H0) is</th>
+        </tr>
+        <tr>
+            <th>True</th>
+            <th>False</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Row 1 -->
+        <tr>
+          <td rowspan="2">Decision about <br> null hypothesis (H0) </td>
+            <td>Not reject</td>
+            <td>Correct inference <br> (True negative) <br> (p = 1 - α)</td>
+            <td>Type II error <br> (False negative) <br> (p = β)</td>
+        </tr>
+        <!-- Row 2 -->
+        <tr>
+            <td>Reject</td>
+            <td>Type I error <br> (False positive) <br> (p = α) </td>
+            <td>Correct inference <br> (True positive) <br> (p = 1 - β)</td>
+        </tr>
+    </tbody>
+</table>

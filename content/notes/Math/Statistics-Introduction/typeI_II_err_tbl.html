@@ -1,0 +1,43 @@
+<head>
+    <title>Type I and II error table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<table>
+    <!-- Table Head -->
+    <thead>
+        <tr>
+            <th rowspan="2" colspan="2">Table of error types</th>
+            <th colspan="2">Null hypothesis (\( H_0 \)) is</th>
+        </tr>
+        <tr>
+            <th>True</th>
+            <th>False</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Row 1 -->
+        <tr>
+          <td rowspan="2">Decision about <br> null hypothesis (\( H_0 \))</td>
+            <td>Not reject</td>
+            <td>Correct inference <br> (True negative) <br> \( (p = 1 - \alpha) \)</td>
+            <td>Type II error <br> (False negative) <br> \( (p = \beta) \)</td>
+        </tr>
+        <!-- Row 2 -->
+        <tr>
+            <td>Reject</td>
+            <td>Type I error <br> (False positive) <br> \( (p = \alpha) \)</td>
+            <td>Correct inference <br> (True positive) <br> \( (p = 1 - \beta) \)</td>
+        </tr>
+    </tbody>
+</table>
