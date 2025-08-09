@@ -61,28 +61,58 @@ seo:
 ---
 
 <!--more-->
-## Install R from conda
-### Install: `conda install r-base`
-#### [Optional]: `conda install pandoc`
-### Run R: `R`
-### Install `rmarkdown`
-#### Choose nearest mirror to download packages: `chooseCRANMirror()`
-#### To use rmarkdown in R: `install.packages("rmarkdown")`
-#### Use conda to install R package, from conda-forge (Suggested)
-##### `conda install -c conda-forge r-rmarkdown`
-### To export PDF document from R:
-#### `install.packages("tinytex")`
-#### `tinytex::install_tinytex()`
-### Edit a [ ex1.rmd ](./ex1.rmd)
-### Render it in R:
-#### `library(rmarkdown)`
-#### `rmarkdown::render('ex1.rmd')`
-#### `rmarkdown::render("ex1.rmd", output_format = "pdf_document")`
-##### Common output_format options include:
-    "html_document"
-    "pdf_document"
-    "word_document"
-    "all" (renders all formats specified in the YAML header)
-### Render in command line: `Rscript -e "rmarkdown::render('ex1.rmd')"`
-### Example output: [ex1.pdf](./ex1.pdf)
+## Install R via Conda
+### Install
+```sh
+conda install r-base
+```
+```sh
+conda install r-base pandoc
+```
 
+### Run R
+```sh
+R
+```
+### Install R Markdown
+
+#### Install via R
+```R
+> chooseCRANMirror()
+> install.packages("rmarkdown")
+```
+
+#### Install via Conda from conda-forge (Suggested)
+```sh
+conda install -c conda-forge r-rmarkdown
+```
+
+### Export PDF from R:
+#### Install `tinytex` or use system installed TeX like MacTeX
+```R
+> install.packages("tinytex")
+> tinytex::install_tinytex()
+```
+
+#### Edit R Markdown document, e.g [ ex1.rmd ](./ex1.rmd)
+#### Render R Markdown document
+##### Render it in R:
+```R
+> library(rmarkdown)
+> rmarkdown::render('ex1.rmd')
+> # or
+> rmarkdown::render("ex1.rmd", output_format = "pdf_document")`
+```
+###### Common output_format options
+- "html_document"
+- "pdf_document"
+- "word_document"
+- "all" (renders all formats specified in the YAML header)
+
+##### Render outside R:
+```sh
+Rscript -e "rmarkdown::render('ex1.rmd')"
+```
+
+#### Sample output
+- [ex1.pdf](./ex1.pdf)
