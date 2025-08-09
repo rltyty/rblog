@@ -23,7 +23,8 @@ jobs:
     - name: Copy mindmaps to static/mindmaps
       run: |
         mkdir -p static/mindmaps
-        find content/notes -name '*.html' -exec bash -c '
+        # find content/notes -name '*.html' -exec bash -c '
+        find content/notes -type f \( -name '*.html' -o -name '*.pdf' -o -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' -o -name '*.svg' \) -exec bash -c '
           for path; do
             rel="${path#content/notes/}"
             dest="static/mindmaps/$rel"
