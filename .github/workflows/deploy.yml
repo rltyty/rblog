@@ -22,27 +22,26 @@ jobs:
 
     - name: Copy mindmaps to static/mindmaps
       run: |
-        find content/notes -name '*.html' -exec bash -c '
-          for html_path; do
-            dir="$(dirname "$html_path")"
-            rel_dir="${dir#content/notes/}"
+        # Process each HTML file individually
+        find content/notes -name '*.html' -print0 | while IFS= read -r -d '' html_path; do
+          dir="$(dirname "$html_path")"
+          rel_dir="${dir#content/notes/}"
 
-            # Create target dir
-            mkdir -p "static/mindmaps/$rel_dir"
+          # Create target directory
+          mkdir -p "static/mindmaps/$rel_dir"
 
-            # 1. Copy the HTML file
-            cp "$html_path" "static/mindmaps/$rel_dir/"
+          # 1. Copy the HTML file
+          cp "$html_path" "static/mindmaps/$rel_dir/"
 
-            # 2. Copy PDFs ONLY from the same dir as HTML
-            find "$dir" -maxdepth 1 -type f -name "*.pdf" -exec cp {} "static/mindmaps/$rel_dir/" \;
+          # 2. Copy PDFs from the same directory
+          find "$dir" -maxdepth 1 -type f -name '*.pdf' -exec cp {} "static/mindmaps/$rel_dir/" \;
 
-            # 3. Copy images/ ONLY if in same dir as HTML
-            if [ -d "$dir/images" ]; then
-              mkdir -p "static/mindmaps/$rel_dir/images"
-              cp -r "$dir/images/." "static/mindmaps/$rel_dir/images/"
-            fi
-          done
-        ' bash {} +
+          # 3. Copy images/ subdirectory if it exists
+          if [ -d "$dir/images" ]; then
+            mkdir -p "static/mindmaps/$rel_dir/images"
+            cp -r "$dir/images/." "static/mindmaps/$rel_dir/images/"
+          fi
+        done
 
     - name: Append mindmap links (safely)
       run: |
