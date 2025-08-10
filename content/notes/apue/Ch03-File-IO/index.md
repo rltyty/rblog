@@ -626,7 +626,7 @@ When we say ***unbuffered***, we mean "unbuffered in userspace" (to minimize
 the system call overhead). The data read/written here will go through the
 kernel's buffer cache.
 
-See [Ex3_1_read_and_write.c](./src/ch3/Ex3_1_read_write.c)
+See [Ex3_1_read_and_write.c](./src/Ex3_1_read_write.c)
 
 Q3.2 Write your own `dup2(2)`, don't use `fcntl`. Be sure to handle errors.
 
@@ -749,7 +749,7 @@ Which fds are affected by an fcntl(2) on fd1 with a command of F_SETFL?
 A: With F_SETFD, only fd1 is affected. With F_SETFL, both fd1 and fd2 are
 affected.
 
-![Ex3.3 resulting picture](./drawings/ch3/Ex_3_3.png)
+![Ex3.3 resulting picture](./drawings/Ex_3_3.png)
 
 Q3.4 The following sequence of code has been observed in various programs:
 

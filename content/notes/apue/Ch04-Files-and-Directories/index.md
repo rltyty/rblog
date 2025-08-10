@@ -1,0 +1,184 @@
+---
+title: "Ch04 Files and Directories"
+subtitle: ""
+date: 2025-08-10T13:01:20+08:00
+lastmod: 2025-08-10T13:01:20+08:00
+draft: false
+author: "rltyty"
+authorLink: ""
+description: ""
+license: ""
+images: []
+
+tags: ['Filesystem', 'Unix']
+categories: ['IT']
+
+featuredImage: ""
+featuredImagePreview: ""
+
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+  keepStatic: false
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: true
+  # ...
+mapbox:
+  # ...
+share:
+  enable: true
+  # ...
+comment:
+  enable: true
+  # ...
+library:
+  css:
+    # someCSS = "some.css"
+    # located in "assets/"
+    # Or
+    # someCSS = "https://cdn.example.com/some.css"
+  js:
+    # someJS = "some.js"
+    # located in "assets/"
+    # Or
+    # someJS = "https://cdn.example.com/some.js"
+seo:
+  images: []
+  # ...
+---
+
+<!--more-->
+
+## struct stat
+
+- on Linux:
+    /usr/include/x86_64-linux-gnu/bits/struct_stat.h:26
+- on macOS:
+    /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/stat.h:158
+struct stat __DARWIN_STRUCT_STAT64;
+
+### mode_t
+
+- on Linux: unsigned int
+    /usr/include/x86_64-linux-gnu/bits/types.h
+- on macOS: unsigned short
+    /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/i386/_types.h
+
+## Exercises
+
+### 4.1
+When using `stat` instead of `lstat`, symbolic links will be followed. The
+`struct stat` retrieved for a symbolic link like `/dev/stdin` is that of the
+target file it points to, not the link itself. Therefore, the file type is
+not `symbolic link` but `character special`.
+`/dev/stdin -> /dev/fd/0` (macOS),
+`/dev/stdin -> /proc/self/fd/0` (Linux)
+
+### 4.2
+When `umask` is set to `0777`, the new created file mode will all turned off,
+resulting in `----------` (000) permissions.
+
+```sh
+> umask
+022
+> umask 0777
+> touch x
+> ll x
+---------- 1 david staff 0 Jun 22 21:05 x
+> umask 022
+> touch y
+> ll y
+-rw-r--r-- 1 david staff 0 Jun 22 21:07 y
+```
+### 4.3
+
+```sh
+> ll a
+--w-r--r-- 1 david staff 6 Jun 23 13:36 a
+> echo "hello" >> ./a
+> echo "world" >> ./a
+> cat ./a
+cat: ./a: Permission denied
+> sudo cat ./a
+hello
+world
+```
+Even if a file is owned by a user, turning off its user-read permission
+denies the user's reading access. However, if user-write permission is on,
+it still allows the user to write to it.
+
+### 4.4
+
+```sh
+> cat foo
+foo
+> cat bar
+bar
+> ll foo bar
+-rw-r--r-- 1 gpanda staff 4 Jun 23 14:02 bar
+-rw-r--r-- 1 gpanda staff 4 Jun 23 14:02 foo
+> ./umask
+> cat foo
+> cat bar
+> ll foo bar
+-rw-r--r-- 1 gpanda staff 0 Jun 23 14:03 bar
+-rw-r--r-- 1 gpanda staff 0 Jun 23 14:03 foo
+>
+```
+
+If a file already exists, changing `umask` doesn't affect file creation mode.
+However, the new creation will truncate the original file because the `umask`
+script uses `creat(2)`, which is equivalent to
+`open(path, O_CREAT | O_TRUNC | O_WRONLY, mode);`.
+
+### 4.5
+No, a directory type file's content has at least two directory entries: dot
+and dot-dot. A symbolic link's file content is the path of the target file
+the link points to. Therefore, the content size of either type of file cannot
+be zero.
+
+### 4.6
+
+```sh
+> ll -hs hole1G*
+8.0K -rw-r--r-- 1 gpanda staff 1.1G Jun 27 07:39 hole1G
+> du -hs
+16K     .
+> df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/disk1s5s1  466G  405G   61G  87% /
+
+> cp hole1G hole1G.copy
+> ll -hs hole1G*
+8.0K -rw-r--r-- 1 gpanda staff 1.1G Jun 27 07:39 hole1G
+8.0K -rw-r--r-- 1 gpanda staff 1.1G Jun 27 08:05 hole1G.copy
+> du -hs
+24K     .
+> df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/disk1s5s1  466G  405G   61G  87% /
+
+> cp --sparse=never hole1G hole1G.copy.fillzeroblocks
+> ll -hs hole1G*
+8.0K -rw-r--r-- 1 gpanda staff 1.1G Jun 27 07:39 hole1G
+8.0K -rw-r--r-- 1 gpanda staff 1.1G Jun 27 08:05 hole1G.copy
+1.1G -rw-r--r-- 1 gpanda staff 1.1G Jun 27 08:06 hole1G.copy.fillzeroblocks
+> du -hs
+1.1G    .
+> df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/disk1s5s1  466G  406G   60G  88% /
+```
