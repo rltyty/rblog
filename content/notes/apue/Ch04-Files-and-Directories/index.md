@@ -64,18 +64,58 @@ seo:
 
 ## struct stat
 
-- on Linux:
-    /usr/include/x86_64-linux-gnu/bits/struct_stat.h:26
-- on macOS:
-    /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/stat.h:158
-struct stat __DARWIN_STRUCT_STAT64;
+- Linux: `/usr/include/x86_64-linux-gnu/bits/struct_stat.h:26`
+- macOS: `/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/stat.h:158`
 
-### mode_t
+```c
+#define __DARWIN_STRUCT_STAT64 { \
+	dev_t		st_dev;                 /* [XSI] ID of device containing file */ \
+	mode_t		st_mode;                /* [XSI] Mode of file (see below) */ \
+	nlink_t		st_nlink;               /* [XSI] Number of hard links */ \
+	__darwin_ino64_t st_ino;                /* [XSI] File serial number */ \
+	uid_t		st_uid;                 /* [XSI] User ID of the file */ \
+	gid_t		st_gid;                 /* [XSI] Group ID of the file */ \
+	dev_t		st_rdev;                /* [XSI] Device ID */ \
+	__DARWIN_STRUCT_STAT64_TIMES \
+	off_t		st_size;                /* [XSI] file size, in bytes */ \
+	blkcnt_t	st_blocks;              /* [XSI] blocks allocated for file */ \
+	blksize_t	st_blksize;             /* [XSI] optimal blocksize for I/O */ \
+	__uint32_t	st_flags;               /* user defined flags for file */ \
+	__uint32_t	st_gen;                 /* file generation number */ \
+	__int32_t	st_lspare;              /* RESERVED: DO NOT USE! */ \
+	__int64_t	st_qspare[2];           /* RESERVED: DO NOT USE! */ \
+}
+```
 
-- on Linux: unsigned int
-    /usr/include/x86_64-linux-gnu/bits/types.h
-- on macOS: unsigned short
-    /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/i386/_types.h
+### Holes in a File
+
+- Create a real 1GB file filling with zeros
+
+```sh
+dd if=/dev/zero of=real1G bs=1G count=1
+
+```
+- Create a sparse1G file with a hole
+```sh
+dd if=/dev/zero of=sparse1G bs=1 count=0 seek=1G
+```
+
+- Logical size and disk usage
+```sh
+ls -lhs hole1G sparse1G real1G
+1.0G -rw-r--r-- 1 gpanda staff 1.0G Aug  7 12:29 real1G
+   0 -rw-r--r-- 1 gpanda staff 1.0G Aug  7 12:25 sparse1G
+8.0K -rw-r--r-- 1 gpanda staff 1.1G Jun 27 07:39 hole1G
+```
+
+`ls -l`: shows logical size, `st_size`
+`ls -s`: shows disk usage, `st_blocks`
+
+`ls -s` use 1KB as block size to report the disk usage, this doesn't mean the
+real block size (allocation unit) of the file system is 1KB.
+To show file system block size: `stat -f /`
+
+- Use `stat file` to show file logical size and blocks usage
 
 ## Exercises
 
@@ -152,33 +192,5 @@ be zero.
 
 ### 4.6
 
-```sh
-> ll -hs hole1G*
-8.0K -rw-r--r-- 1 gpanda staff 1.1G Jun 27 07:39 hole1G
-> du -hs
-16K     .
-> df -h
-Filesystem      Size  Used Avail Use% Mounted on
-/dev/disk1s5s1  466G  405G   61G  87% /
+[Ex_4.6c](src/Ex4_6.c)
 
-> cp hole1G hole1G.copy
-> ll -hs hole1G*
-8.0K -rw-r--r-- 1 gpanda staff 1.1G Jun 27 07:39 hole1G
-8.0K -rw-r--r-- 1 gpanda staff 1.1G Jun 27 08:05 hole1G.copy
-> du -hs
-24K     .
-> df -h
-Filesystem      Size  Used Avail Use% Mounted on
-/dev/disk1s5s1  466G  405G   61G  87% /
-
-> cp --sparse=never hole1G hole1G.copy.fillzeroblocks
-> ll -hs hole1G*
-8.0K -rw-r--r-- 1 gpanda staff 1.1G Jun 27 07:39 hole1G
-8.0K -rw-r--r-- 1 gpanda staff 1.1G Jun 27 08:05 hole1G.copy
-1.1G -rw-r--r-- 1 gpanda staff 1.1G Jun 27 08:06 hole1G.copy.fillzeroblocks
-> du -hs
-1.1G    .
-> df -h
-Filesystem      Size  Used Avail Use% Mounted on
-/dev/disk1s5s1  466G  406G   60G  88% /
-```

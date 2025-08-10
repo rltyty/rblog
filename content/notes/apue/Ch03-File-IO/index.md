@@ -105,14 +105,15 @@ int openat(int fd, const char *path, int oflag, ... /* mode_t mode */ );
   directory). In this case the file to be opened is determined relative to the
   directory associated with the `fd` instead of the `cwd`.
 - `openat` to address two problems:
-      - give threads a way to use relative pathnames to open files in directories
-        other than `cwd`. (Since all threads in the same process share the same
-    `cwd`)
+   - give threads a way to use relative pathnames to open files in directories
+     other than `cwd`, since all threads in the same process share the same
+     working directory.
   - avoid `TOCTTOU` (time-of-check-to-time-of-use) errors
     - vulnerability in-between two non-atomic calls, the file can be changed
     between "check()" and "use()", thereby invalidating the results of the
     first call (check()), leading to an error or opening up a security hole.
 - filename and pathname truncation
+
   BSD-derived(including macOS) and Linux always return an error `ENAMETOOLONG`
   if `_POSIX_NO_TRUNC` is in effect (otherwise silently truncated). Modern
   file systems support a maximum(`NAME_MAX`) of 255 chars for filename and
@@ -160,26 +161,29 @@ off_t lseek(int fd, off_t offset, int whence);  // Returns: new file offset if
                                                 // OK, -1 on error
 ```
 
-The interpretation of the `offset` depends on the `whence` argument:
+The offset to reposition depends on `whence`:
 
-- `SEEK_SET`, set to `offset` bytes from the beginning, i.e., $offset + 0$
-- `SEEK_CUR`, set to $offset + cur$
-- `SEEK_END`, set to $offset + end$, `end` i.e., the size of the file
+- `SEEK_SET`, set to `offset` + **0**
+- `SEEK_CUR`, set to `offset` + **cur**
+- `SEEK_END`, set to `offset` + **end** (`offset` + the file size)
+- `SEEK_HOLE`, set to the start of the next hole whose position $\ge$ `offset`
+- `SEEK_DATA`, set to the start of the next non-hole whose position $\ge$
+  `offset`
 
 `offset` can be negative, and the current offset can also be negative for
 certain devices, but for regular files the current offset must be
 non-negative.
-
-```c
-off_t currpos;
-currpos = lseek(fd, 0, SEEK_CUR);
-```
 
 Seeking zero bytes from the current position can be used to determine:
 
 - the current offset
 - if a file is capable of seeking. If `fd` refers to a pipe, FIFO, or socket,
   `lseek` sets `errno` to `ESPIPE` and returns -1.
+
+```c
+off_t currpos;
+currpos = lseek(fd, 0, SEEK_CUR);
+```
 
 A file's current offset can be greater than the file's current size, in which
 case the next write to the file will extend the file. (so called "create a
@@ -192,16 +196,13 @@ of a file, new disk blocks might be allocated to store the data, but there is
 no need to allocate blocks for the data between the old end of file and the
 location where you start writing.
 
-- Use `od` to dump a file containing holes. See [utils.md](./utils.md#od---octal-decimal-hex-ascii-dump)
-
+- Use `od` to dump a file containing holes. See [Utils](/notes/apue/Utils#od---octal-decimal-hex-ascii-dump)
 ```sh
 od -c file.hole
 ```
 
-- Use `ls -ls` to show file size in disk blocks. If sparse file is supported
-  by your file system, a file with holes should be less in blocks than the
-  one of the same file size without holes. But on my macOS, they are the same
-  in blocks.
+For more details on holes in a file, see [Ch04 File System](/notes/apue/Ch04-Files-and-Directories#46)
+
 - Use `getconf` to retrieve standard configuration variables
 
 ```sh
@@ -278,31 +279,65 @@ The kernel uses 3 data structures to represent an open file, and the
 relationships among them determine the effect one process has on another
 process with regard to file sharing.
 
-1. Every process has an entry in its process table. This entry is a vector of
+- A per-process open file descriptor table in the process table. This entry is a table of
    open file descriptors, with one entry per descriptor.
 
    A file descriptor entry contains:
 
-   - file descriptor flags
-   - a pointer to a file table entry
+   - file descriptor flags (`FD_CLOEXEC`)
+   - a pointer to a file table entry (also called file description)
 
-2. The kernel maintains a file table for all open files.
+- A kernel-wide open file table.
 
-   Each file table entry contains:
+  - Each successful `open(2)` system call create a file table entry:
+    - file status flags, such as read, write, append, sync and non-blocking
+    - current file offset
+    - a pointer to the v-node table entry for the file
 
-   - file status flags, such as read, write, append, sync and non-blocking
-   - current file offset
-   - a pointer to the v-node table entry for the file
-
-3. Each open file (or device) has a v-node structure that contains information
-   about the type of file and pointers to functions that operate on the file.
-   For most files, the v-node contains the i-node for the file. This info is
-   read from disk when the file is opened.
+- Each open file (or device) has a v-node structure that contains information
+  about the type of file and pointers to functions that operate on the file.
+  For most files, the v-node contains the i-node for the file. This info is
+  read from disk when the file is opened.
 
    A i-node contains the owner, the size, pointers to where the actual data
    blocks are located on disk, and so on.
 
 ![Kernel data structures for open files](./images/Fig3.7%20Kernel%20data%20structures%20for%20open%20files.png)
+
+
+
+| Component     | Scope        | Key Contents                                                    |
+|---------------|--------------|-----------------------------------------------------------------|
+| **FD Table**  | Per-process  | FD flags, pointer to file table entry.                          |
+| **File Table**| Kernel-wide  | File offset, status flags, pointer to v-node.                  |
+| **V-Node**    | Kernel-wide  | File type, operations, pointer to i-node (or FS-specific data). |
+| **I-Node**    | Filesystem   | Metadata, data block pointers (or APFS B-tree object).          |
+
+
+```mermaid
+---
+title: Sharing by dup(2) (in-process), by fork(2) (among parent & children processes)
+---
+flowchart TD
+    A[Process Parent FD_X] --> B[File Table Entry]
+    C[Process Parent FD_XDUP] --> B[File Table Entry]
+    D[Process Child_1 FD_X] --> B
+    E[Process Child_2 FD_X] --> B
+    B --> F[V-Node]
+```
+
+```mermaid
+---
+title: Multiple open(2) of same file by same process
+---
+flowchart TD
+A[Process A FD_X] --> O[File Table Entry X]
+B[Process A FD_Y] --> P[File Table Entry Y]
+C[Process A FD_Z] --> Q[File Table Entry Z]
+O --> F[V-Node]
+P --> F
+Q --> F
+```
 
 **NOTE**
 
@@ -318,10 +353,10 @@ Two independent processes with the same file open
 
 ![Two independent processes with the same file open](./images/Fig3.8%20Two%20independent%20processes%20with%20the%20same%20file%20open.png)
 
-Each process has its own file table entry for the same open file, but only a
-single v-node table entry for a given file.
+Each process has its own open file table entry for the same open file, but
+only a single v-node table entry for a given file.
 
-- After each write, the current file offset(CFO) in the file table entry is
+- After each write, the current file offset (CFO) in the file table entry is
   incremented by the number of bytes written. If the current file offset
   exceeds the current file size, the current file size in the i-node table
   entry is set to the current file offset.
