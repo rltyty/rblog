@@ -157,7 +157,7 @@ params:
       mhchem: true
     code:
       copy: true
-      maxShownLines: 50
+      maxShownLines: 10 
     mapbox:
       accessToken: ""
       lightStyle: mapbox://styles/mapbox/light-v10?optimize=true
