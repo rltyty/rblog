@@ -11,7 +11,7 @@ license: ""
 images: []
 
 tags: ['process', 'Unix']
-categories: []
+categories: ['IT']
 
 featuredImage: ""
 featuredImagePreview: ""
@@ -79,6 +79,15 @@ main
 ```
 
 ### Termination
+
+```c
+#include <stdlib.h>     // specified by ISO C
+void exit(int status);  // cleanup: fclose all open streams, call atexit handlers
+void _Exit(int status);
+
+#include <unistd.h>     // specified by POSIX.1
+void _exit(int status);
+```
 
 #### explicit call of `exit(status)` from `main()`
 
@@ -219,12 +228,13 @@ argv[3]: (null)
  */
 ```
 
-### Interpreter File
+### Interpreter file
 
 Read the man page `execve(2)`
 
 If the first two bytes of a script are `#!` (***shebang***), and they're
-followed by an **interpreter**, it is an interpreter file.
+followed by an **interpreter**, it is an interpreter file (***shebang***
+script).
 
 ```sh
 #! interpreter [ optional-argument ...]
@@ -233,15 +243,28 @@ followed by an **interpreter**, it is an interpreter file.
 
 When it is executed via `./a.sh` or `execve(interpreter_file_path, argv, envp)`
 
-1. The kernel locates and load the **interpreter** after `#!` (***shebang***)
-2. The **interpreter** receives arguments in this order:
+1. The kernel locates and load the **interpreter** after the ***shebang***
+2. The arguments to be passed to **interpreter**  are built in this order:
    - the zeroth argument: the **interpreter** itself
    - the first (second, ..) argument: the optional arguments after the **interpreter**
-   - the interpreter file path (or the path passed to `execve()`)
+   - the script file path (or the path passed to `execve()`)
    - the original arguments passed to the script or `exec` call (`argv`)
+3. The kernel calls a second `execve()` with the **interpreter** and arguments.
+   - if the **interpreter** is an executable binary, the kernel will setup
+     process image and jump to `_start` in user process.
+   - if the **interpreter** is also an ***shebang*** script, the kernel goes
+     back to step 1, recursively. (Linux: BINPRM_MAX_RECURSION=4, if exceeded,
+     failed with `ELOOP`)
 
-The kernel overrides the first argument passed to the ***shebang*** script
-with the script path.
+**NOTE:**
+  a. The kernel overrides the first argument passed to the ***shebang***
+     script with the script path.
+  b. On Linux the kernel only supports one optional shebang argument -- it's
+     just one contiguous string after the interpreter path, up to newline
+     argv[0]: Debug/procenv/printargv
+     argv[1]: interp_arg1 interp_arg2   <- Linux: the rest of the line after the interpreter
+     argv[2]: ./tmp/data/procenv/interpreter.file
+     ...
 
 - Example 1: `execve(2)` with ***shebang*** interpreter file
 ```c
@@ -262,7 +285,6 @@ int main(int argc, char *argv[]) {
 }
 
 /*
- *
 cat ./tmp/data/procenv/interpreter.file
 #! Debug/procenv/printargv interp_arg1 interp_arg2
 
@@ -320,6 +342,8 @@ argv[2]: arg2
 
 ## Memory Layout
 
+![Typical memory arrangement](<images/Typical memory arrangement.png>)
+
 ### Stack Segment
 
 Automatic storage duration, variables are declared in a function:
@@ -341,10 +365,108 @@ in a function:
 
 NOTE:
 
-Explicit array initialization with zero-initialized for all storage duration
-variables.
+When an array is partially initialized, all unspecified elements are
+zero-initialized, no matter what storage duration the array is in.
+
 1. Full: `int numbers[5] = {10, 20, 30, 40, 50};`
 2. Partial (rest zero-initialized): `int numbers[5] = {10, 20};`
 3. Omitted size (compiler determines): `int numbers[] = {10, 20, 30};`
 4. Designated initializers (C99+): `int numbers[5] = {[2] = 30, [0] = 10};`
+
+### Inspect an executable binary layout (`size` or `otool`)
+
+```sh
+#
+# On Linux:
+# > size ./Debug/procenv/printargv ./Debug/procenv/execve
+#    text    data     bss     dec     hex filename
+#    1392     584       8    1984     7c0 ./Debug/procenv/printargv
+#    1815     648      16    2479     9af ./Debug/procenv/execve
+
+```
+
+##  Memory allocation
+
+```c
+#include <stdlib.h>
+void *malloc(size_t size);
+void *calloc(size_t nobj, size_t size);
+void *realloc(void *ptr, size_t newsize);
+                    // All three return: non-null pointer if OK, NULL on error
+
+void free(void *ptr);
+```
+
+- `malloc`: memory allocation
+- `calloc`: contagious allocation, array of elements
+- `realloc`: when `ptr` is `NULL`, `ralloc` is `malloc`
+
+The allocation allocates more space than requested and use the additional
+space for **record-keeping** (size of the block, a pointer to the next
+allocated block and the like). Writing past the end or before the start of an
+allocated area would overwrite the **record-keeping** information of another
+block.
+
+The allocation routines are usually implemented with the `sbrk(2)` syscall.
+This call expands (or contracts) the heap of the process. However, the freed
+space is not usually returned to the kernel; instead, it is kept in
+the `malloc` pool.
+
+- `free`:  Find memory metadata by the help of `ptr` and know the size of
+memory to be freed.
+
+## `setjmp` and `longjmp`
+
+`goto` is a local jump, jump in the same function (same stack frame). `setjmp`
+and `longjmp` can jump across stack frames. `longjmp` causes the stack to be
+***unwound*** back to the function where `setjmp` is called, throwing away
+the after stack frames.
+
+```c
+#include <setjmp.h>
+int setjmp(jmp_buf env);
+  // Returns: 0 if called directly, nonzero if returning from a call to longjmp
+
+void longjmp(jmp_buf env, int val);
+```
+## Incorrect usage of an automatic variable
+
+```c
+FILE *
+open_data(void)
+{
+  FILE    *fp;
+  char    databuf[BUFSIZ];  /* setvbuf makes this the stdio buffer */ <-- err
+  if ((fp = fopen("datafile", "r")) == NULL)
+      return(NULL);
+  if (setvbuf(fp, databuf, _IOLBF, BUFSIZ) != 0)
+      return(NULL);
+  return(fp);     /* error */
+}
+```
+
+`databuf` needs to be allocated from global memory, either statically (`static`
+or `extern`) or dynamically (one of `alloc` functions).
+
+## `getlimit` and `setlimit`
+
+```c
+#include <sys/resource.h>
+int getrlimit(int resource, struct rlimit *rlptr);
+int setrlimit(int resource, const struct rlimit *rlptr);
+                                 //   Both return: 0 if OK, −1 on error
+
+struct rlimit {
+  rlim_t  rlim_max;  /* hard limit: maximum value for rlim_cur */
+  rlim_t  rlim_cur;  /* soft limit: current limit */
+};
+```
+
+
+| API / Header               | Example                        | Scope               | Changeable?     | Source         |
+| -------------------------- | ------------------------------ | ------------------- | --------------- | -------------- |
+| `<limits.h>`               | `INT_MAX`, `OPEN_MAX`          | Compile-time / C    | No              | Compiler/C lib |
+| `sysconf(_SC_...)`         | `_SC_OPEN_MAX`                 | Runtime query       | No (read-only)  | Kernel/config  |
+| `<sys/resource.h>` rlimits | `RLIMIT_NOFILE`, `RLIMIT_DATA` | Runtime per-process | Yes (soft/hard) | Kernel         |
+
 
