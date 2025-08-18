@@ -10,7 +10,7 @@ description: ""
 license: ""
 images: []
 
-tags: ['process', 'Unix']
+tags: ['Process', 'Unix']
 categories: ['IT']
 
 featuredImage: ""

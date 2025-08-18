@@ -60,6 +60,27 @@ seo:
   # ...
 ---
 
+## POSIX Shell
+
+### `?`
+
+`?` is a pathname expansion (globbing) operator
+
+`??` matches any path name of length 2 in current directory
+
+```sh
+> echo ??
+db
+> echo ???
+lib pty
+> echo ????
+ipc1 ipc2 proc
+> echo ?????
+advio intro stdio
+```
+
+###
+
 ## awk
 
 ### read a file line by line
@@ -123,7 +144,7 @@ by replacing internal spaces with hyphens and making lowercase.
 [Jump to the header](#the-header)
 ```
 
-This is equivalent to 
+This is equivalent to
 
 ```html
 <a href="#the-header">Link Text</a>

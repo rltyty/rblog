@@ -18,5 +18,5 @@ map({'n'}, '<leader>ze', 'a****<ESC>hi', {desc = 'Insert an emphasized word', no
 map({'n'}, '<leader>zi', 'a******<ESC>hhi', {desc = 'Insert an italic word', noremap = true})
 map({'n'}, '<leader>zt', 'a``<ESC>i', {desc = 'Insert an inline code', noremap = true})
 map({'n'}, '<leader>zc', 'o```<CR>```<ESC>O', {desc = 'Insert a code block', noremap = true})
-map({'n'}, '<leader>zp', 'o![]()<ESC>2hi', {desc = 'Insert an image', noremap = true})
+map({'n'}, '<leader>zp', 'o![](<./images/>)<ESC>2hi', {desc = 'Insert an image', noremap = true})
 

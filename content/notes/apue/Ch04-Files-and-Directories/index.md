@@ -87,7 +87,23 @@ seo:
 }
 ```
 
-### Holes in a File
+## File Types
+
+- Regular file
+
+- Directory file
+
+- Block special file
+
+- Character special file
+
+- FIFO (a.k.a named pipe)
+
+- Socket
+
+- Symbolic link
+
+## Holes in a File
 
 - Create a real 1GB file filling with zeros
 
