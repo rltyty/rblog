@@ -79,13 +79,53 @@ seo:
 
 ### Signal Generation
 
-- Terminal-generated signals when users press certain terminal keys.
-  - `<CTRL-C>` -> `SIGINT`
-- Hardware exception
-  - Divide by 0 -> `SIGFPE`
-  - Invalid memory reference -> `SIGSEGV` (segmentation fault)
-- Software condition
-  - `SIGURG`, `SIGPIPE`, `SIGALRM`
+#### Terminal-generated signals
+
+- Common terminal-generated signal mappings: 
+
+| Key Combination | Signal Sent | Signal No | Default Action                     | Typical Use Case               |
+|-----------------|-------------|---------------|------------------------------------|---------------------------------|
+| `<CTRL-C>`      | `SIGINT`    | 2         | Terminate process                  | Gracefully stop a command       |
+| `<CTRL-Z>`      | `SIGTSTP`   | 18        | Suspend (pause) process            | Pause and resume later (`fg/bg`)|
+| `<CTRL-\>`      | `SIGQUIT`   | 3         | Terminate + core dump (if enabled)  | Force quit and debug            |
+
+
+- See the full current terminal signal mappings:
+
+```sh
+# On macOS:
+> stty -a
+speed 9600 baud; rows 52; columns 203;
+intr = ^C; quit = ^\; erase = ^?; kill = ^U; eof = ^D; eol = <undef>; eol2 = <undef>; start = ^Q; stop = ^S; susp = ^Z; dsusp = ^Y; rprnt = ^R; werase = ^W; lnext = ^V; discard = ^O; status = ^T;
+min = 1; time = 0;
+-parenb -parodd cs8 hupcl -cstopb cread -clocal -crtscts
+-ignbrk brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl ixon -ixoff ixany imaxbel iutf8
+opost -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
+isig icanon iexten echo echoe -echok -echonl -noflsh -tostop -echoprt echoctl echoke -flusho -extproc
+```
+
+- See signal numbers
+
+```sh
+# On macOS:
+> kill -l | awk '{for(i=1;i<=NF;i++) print i ")", $i}' | column
+1) HUP          4) ILL          7) EMT          10) BUS         13) PIPE        16) URG         19) CONT        22) TTOU        25) XFSZ        28) WINCH       31) USR2
+2) INT          5) TRAP         8) FPE          11) SEGV        14) ALRM        17) STOP        20) CHLD        23) IO          26) VTALRM      29) INFO
+3) QUIT         6) ABRT         9) KILL         12) SYS         15) TERM        18) TSTP        21) TTIN        24) XCPU        27) PROF        30) USR1
+
+# On Linux (Debian 12):
+➜  ~ kill -l | awk '{for(i=1;i<=NF;i++) print i ")", $i}' | column
+1) HUP          4) ILL          7) BUS          10) USR1        13) PIPE        16) STKFLT      19) STOP        22) TTOU        25) XFSZ        28) WINCH       31) SYS
+2) INT          5) TRAP         8) FPE          11) SEGV        14) ALRM        17) CHLD        20) TSTP        23) URG         26) VTALRM      29) POLL
+3) QUIT         6) IOT          9) KILL         12) USR2        15) TERM        18) CONT        21) TTIN        24) XCPU        27) PROF        30) PWR
+```
+
+#### Hardware exception
+- Divide by 0 -> `SIGFPE`
+- Invalid memory reference -> `SIGSEGV` (segmentation fault)
+
+#### Software condition
+- `SIGURG`, `SIGPIPE`, `SIGALRM`
 - `kill(2)` send any signal to a process or process group.
 
 ### Disposition of the Signal
@@ -238,19 +278,25 @@ Child stopped by signal 17 (Suspended (signal): 17)
 
 ```
 
-## `signal(3)` function
+## `signal(3)/signal(2)` function
 
 `signal(3)` allows for a signal to be caught, to be ignored, or to generate an
 interrupt. It registers a handler into a per-process signal disposition table
-stored **in the kernel**. Each process has its own independent table.
+stored **in the kernel**. Each process has its own independent table. `fork()`
+make the child inherits its parent's dispositions.
+
+Returns the old (previous) disposition of the signal.
 
 `signal(3)` facility is a simplified interface to the more general
-`sigaction(2)` facility.
+`sigaction(2)` facility. On macOS, `signal(3)` is a wrapper around
+`sigaction(2)` for backward compatibility. On Linux, `signal(2)` is a system
+call like `sigaction(2)`. Both `signal()` are outdated, inconsistent. Use
+modern `sigaction(2)` instead.
 
 ```c
 #include <signal.h>
 void (*signal(int, void (*)(int)))(int);
-            // Returns: previous disposition of signal if OK, SIG_ERR on error
+            // Returns: **previous disposition** of signal if OK, SIG_ERR on error
 
 // friendlier declaration with a typedef
 typedef void (*sighandler_t)(int);
@@ -261,7 +307,7 @@ typedef void Sigfunc(int);
 Sigfunc *signal(int, Sigfunc *);
 ```
 
-Predefined signal handlers:
+Predefined signal dispositions (handlers):
 
 ```c
 #define SIG_DFL         (void (*)(int))0
@@ -313,7 +359,7 @@ received SIGUSR2
 [2]    36330 terminated  ./Debug/signals/sigusr
 ```
 
-### Example 2: Send a signal to a process / pg / job to generate core dump
+### Example 2: Send a signal to a process/process group/job to generate core dump
 
 ```c
 int main(int argc, char *argv[]) {
@@ -410,81 +456,94 @@ drwxr-xr-x 20 root   wheel  640 Jul 17  2024 ../
 
 ```
 
-## Job-control Shell
+### Example 3: Register SIG_IGN disposition to signals SIGINT and SIGQUIT
 
-In a terminal shell supporting job control, a job is a process group. At a
-time, there is one foreground job and multiple background jobs. Any running a
-program is a job.
+Interactive shells usually ignore the interrupt and quit signals for a
+background process by set the disposition of the two signals to be ignored so
+that when `<CTRL-C>` or `<CTRL-\>` is typed, background processes are
+prevented from being interrupted or quitting.
 
-### List jobs
+Many interactive programs that catch these two signals have code that looks
+like
 
-```sh
-# list jobs, + means current (default) job, - means previous job
-> jobs
-[1]  + suspended  vim
-[2]  - running    ./Debug/signals/shelljob
+```c
+void sig_int(int), sig_quit(int);
+if (signal(SIGINT, SIG_IGN) != SIG_IGN)
+  signal(SIGINT, sig_int);
+if (signal(SIGQUIT, SIG_IGN) != SIG_IGN)
+  signal(SIGQUIT, sig_quit);
 ```
 
-### Interrupt/Suspend/Continue a job and `bg`, `fg`, `kill -<SIGNO> %<JobID>`
+The process catches the signal only if the signal is not currently being
+ignored.
 
-- `<CTRL-C>`: send `SIGINT` to interrupt the foreground job (process group)
-- `<CTRL-Z>`: send `SIGTSTP` to suspend the foreground job (process group)
-- `bg`: move a job to background and continue its running
-- `fg`: move a job the foreground job
-- `kill -TSTP %<JobID>` = `kill -18 -<PGID>`
-- `kill -CONT %<JobID>` = `kill -19 -<PGID>`
+A limitation of `signal()`: unable to determine the current disposition of a
+signal without changing the disposition (exchange: set new, return old).
 
-```sh
-> ./Debug/signals/shelljob
-I'm a parent (PID:5219), I have a child (PID:5220)
+## Reentrant Functions
 
-^Z
-[2]  + 5219 suspended
-> jobs
-[1]  - suspended  vim
-[2]  + suspended  ./Debug/signals/shelljob
-> myps -p 5219,5220
-  UID   PID  PPID  PGID   SESS TTY      STAT COMM
-  501  5219 49433  5219      0 ttys001  T    ./Debug/signals/shelljob
-  501  5220  5219  5219      0 ttys001  T    ./Debug/signals/shelljob
-> bg %2
-[2]  - 5219 continued  ./Debug/signals/shelljob
-> jobs
-[1]  + suspended  vim
-[2]  - running    ./Debug/signals/shelljob
-> myps -p 5219,5220
-  UID   PID  PPID  PGID   SESS TTY      STAT COMM
-  501  5219 49433  5219      0 ttys001  S    ./Debug/signals/shelljob
-  501  5220  5219  5219      0 ttys001  S    ./Debug/signals/shelljob
-> fg %2
-[2]  - 5219 running    ./Debug/signals/shelljob
-^Z
-[2]  + 5219 suspended  ./Debug/signals/shelljob
-> jobs
-[1]  - suspended  vim
-[2]  + suspended  ./Debug/signals/shelljob
+By reentrant, it means async-signal safe.
 
-> kill -CONT %2
-> jobs
-[1]  - suspended  vim
-[2]  + running    ./Debug/signals/shelljob
+Call a nonreentrant function from a signal handler, the results are
+unpredictable. Nonreentrant functions:
 
-> kill -TSTP %2
-[2]  + 5219 suspended  ./Debug/signals/shelljob
-> jobs
-[1]    suspended  vim
-[2]  + suspended  ./Debug/signals/shelljob
+- use static data structures
+- call `malloc` or `free`
+- part of the standard I/O library (use global data structures)
 
-> kill -19 -5219
-> jobs
-[1]    suspended  vim
-[2]  + running    ./Debug/signals/shelljob
+e.g. `printf` is a nonreentrant function.
 
-> kill -18 -5219
-> jobs
-[1]    suspended  vim
-[2]  + suspended  ./Debug/signals/shelljob
+Reentrant functions are:
+
+```c
+abort         faccessat     linkat        select        socketpair
+accept        fchmod        listen        sem_post      stat
+access        fchmodat      lseek         send          symlink
+aio_error     fchown        lstat         sendmsg       symlinkat
+aio_return    fchownat      mkdir         sendto        tcdrain
+aio_suspend   fcntl         mkdirat       setgid        tcflow
+alarm         fdatasync     mkfifo        setpgid       tcflush
+bind          fexecve       mkfifoat      setsid        tcgetattr
+cfgetispeed   fork          mknod         setsockopt    tcgetpgrp
+cfgetospeed   fstat         mknodat       setuid        tcsendbreak
+cfsetispeed   fstatat       open          shutdown      tcsetattr
+cfsetospeed   fsync         openat        sigaction     tcsetpgrp
+chdir         ftruncate     pause         sigaddset     time
+chmod         futimens      pipe          sigdelset     timer_getover
+chown         getegid       poll          sigemptyset   timer_gettime
+clock_gettime geteuid       posix_trace_e sigfillset    timer_settime
+close         getgid        pselect       sigismember   times
+connect       getgroups     raise         signal        umask
+creat         getpeername   read          sigpause      uname
+dup           getpgrp       readlink      sigpending    unlink
+dup2          getpid        readlinkat    sigprocmask   unlinkat
+execl         getppid       recv          sigqueue      utime
+execle        getsockname   recvfrom      sigset        utimensat
+execv         getsockopt    recvmsg       sigsuspend    utimes
+execve        getuid        rename        sleep         wait
+_Exit         kill          renameat      sockatmark    waitpid
+_exit         link          rmdir         socket        write
 ```
+
+## `kill(2)` and `raise(3)` Functions
+
+`kill(2)` sends a signal to a process or a group of processes. `raise(3)`
+allows a process send a signal to itself.
+
+```c
+#include <signal.h>
+int kill(pid_t pid, int signo);
+int raise(int signo);
+                                // Both return: 0 if OK, −1 on error
+```
+
+`raise(signo);` is equivalent to `kill(getpid(), signo);`
+
+The superuser can send signals to any process. For other users, the basic rule
+is that the real or effective user ID of the sender has to equal the real or
+effective user ID of the receiver. One special case: if the signal being sent
+is `SIGCONT`, a process can send it to any other process in the same session.
+
 
 ## `sigaction(2)`
 

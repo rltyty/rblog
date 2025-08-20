@@ -98,7 +98,7 @@ multiple authentication procedures.
   - `chdir` to user home directory
   - `chown` ownership of the terminal device
   - `chmod` permissions of the terminal device
-  - `setgid` and `initgroups` to set up group id
+  - `setpgid` and `initgroups` to set up group id
   - initialize environments:
     - HOME
     - SHELL
@@ -229,6 +229,45 @@ pid_t setsid(void);
 - Also the leader of new process group
 - `getsid` return the leader's process group ID 
 
+**NOTES**
+
+- A process automatically joins a process group at creation via parent
+  inheritance of PGID.
+- A process group is created by a successful call of `setpgid(2)` with
+  `pgid = pid`:
+  - `setpgid(0, 0)` or `setpgid(getpid(), getpid())`: create a group for the
+    calling process itself. The caller becomes the group leader.
+  - `setpgid(child_pid, child_pid);`: create a group for a child process and
+    name the child the group leader. (Allowed only before the child execs or
+    runs independently.)
+- A process group leader cannot leave (abandon) its group and join another
+  group. `setpgid(pid, pgid)` fails with `EPERM` if the target process whose
+  PID is `pid` is already a process group leader.
+- A process, which is not a leader, can be moved to another existing process
+  group in the same session by calling `setpgid(2)`. 
+  - If `pgid != pid` and `pgid` does not correspond to an existing group in
+    the same session, the kernel returns `EINVAL`.  
+  - The `pgid` argument may be the PID of any process in the target group
+    (not necessarily the leader), but the group must already exist.
+- In a shell terminal, a session is created by a process calling `setsid()`
+  which creates a new process group, the calling process becomes the group
+  leader and the session leader (`SID=PID`, `PGID=PID`). The call detaches
+  the process from the controlling terminal (if any).
+  - Daemons typically call `setsid(2)` to detach from the terminal so they
+    don’t get killed when you log out or press Ctrl-C.
+- A session leader cannot leave (abandon) its session.
+- The relationship between a process and a session is formed:
+  - at process creation (`fork(2)`) via parent inheritance of SID and PGID
+  - at session creation (`setsid(2)`) when the process becomes the session
+    leader.
+- The only way for a process to leave its current session is to create a new
+  session and becomes its leader (via `setsid(2)`).
+- A child process can have a different session ID from its parent's when:
+  - The original parent creates a new session for itself (calls `setsid()`).
+  - The child itself calls `setsid()` to create a new session.
+  - When a parent exits, its orphaned children are reparented to `init`
+    (PID 1), but their session ID does **not** change.
+
 ## Controlling Terminal
  
  ![Process groups and sessions showing controlling terminal](<./images/Process groups and sessions showing controlling terminal.png>)
@@ -281,5 +320,80 @@ Main process say Hi!
 */
 ```
 
+## Job-control Shell
+
+In a terminal shell supporting job control, a job is a process group. At a
+time, there is one foreground job and multiple background jobs. Any running a
+program is a job.
+
+### List jobs
+
+```sh
+# list jobs, + means current (default) job, - means previous job
+> jobs
+[1]  + suspended  vim
+[2]  - running    ./Debug/signals/shelljob
+```
+
+### Interrupt/Suspend/Continue a job and `bg`, `fg`, `kill -<SIGNO> %<JobID>`
+
+- `<CTRL-C>`: send `SIGINT` to interrupt the foreground job (process group)
+- `<CTRL-Z>`: send `SIGTSTP` to suspend the foreground job (process group)
+- `bg`: move a job to background and continue its running
+- `fg`: move a job the foreground job
+- `kill -TSTP %<JobID>` = `kill -18 -<PGID>`
+- `kill -CONT %<JobID>` = `kill -19 -<PGID>`
+
+```sh
+> ./Debug/signals/shelljob
+I'm a parent (PID:5219), I have a child (PID:5220)
+
+^Z
+[2]  + 5219 suspended
+> jobs
+[1]  - suspended  vim
+[2]  + suspended  ./Debug/signals/shelljob
+> myps -p 5219,5220
+  UID   PID  PPID  PGID   SESS TTY      STAT COMM
+  501  5219 49433  5219      0 ttys001  T    ./Debug/signals/shelljob
+  501  5220  5219  5219      0 ttys001  T    ./Debug/signals/shelljob
+> bg %2
+[2]  - 5219 continued  ./Debug/signals/shelljob
+> jobs
+[1]  + suspended  vim
+[2]  - running    ./Debug/signals/shelljob
+> myps -p 5219,5220
+  UID   PID  PPID  PGID   SESS TTY      STAT COMM
+  501  5219 49433  5219      0 ttys001  S    ./Debug/signals/shelljob
+  501  5220  5219  5219      0 ttys001  S    ./Debug/signals/shelljob
+> fg %2
+[2]  - 5219 running    ./Debug/signals/shelljob
+^Z
+[2]  + 5219 suspended  ./Debug/signals/shelljob
+> jobs
+[1]  - suspended  vim
+[2]  + suspended  ./Debug/signals/shelljob
+
+> kill -CONT %2
+> jobs
+[1]  - suspended  vim
+[2]  + running    ./Debug/signals/shelljob
+
+> kill -TSTP %2
+[2]  + 5219 suspended  ./Debug/signals/shelljob
+> jobs
+[1]    suspended  vim
+[2]  + suspended  ./Debug/signals/shelljob
+
+> kill -19 -5219
+> jobs
+[1]    suspended  vim
+[2]  + running    ./Debug/signals/shelljob
+
+> kill -18 -5219
+> jobs
+[1]    suspended  vim
+[2]  + suspended  ./Debug/signals/shelljob
+```
 
 

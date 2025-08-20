@@ -216,7 +216,13 @@ has an option that prevents it from blocking.
 `wait()` family functions return -1 and set `ECHILD` when the caller has no
 children (or being unwaited for).
 
-A terminated process has no parent waiting for it is called a ***zombie***.
+A ***zombie*** process or ***defunct*** process is a process that has
+completed execution (via the exit system call) but still has an entry in the
+process table: it is a process in the "terminated state". This occurs for the
+child processes, where the entry is still needed to allow the parent process
+to read its child's exit status: once the exit status is read via the `wait`
+system call, the zombie's entry is removed from the process table and it is
+said to be ***"reaped"***.
 
 ```c
 int main(int argc, char *argv[]) {
