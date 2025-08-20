@@ -268,6 +268,68 @@ pid_t setsid(void);
   - When a parent exits, its orphaned children are reparented to `init`
     (PID 1), but their session ID does **not** change.
 
+```c
+int main(int argc, char *argv[]) {
+  pid_t pid;
+
+  pid_t sid = getsid(0); // get current session id
+  printf("current session id: %d\n", sid);
+
+  if ((pid = fork()) < 0) {
+    my_perror("error: fork");
+  } else if (pid == 0) { // child
+    assert(getsid(0) == sid);
+    printf("I'm child %d, my parent %d, my PGID %d, my SID %d\n",
+           getpid(), getppid(), getpgid(0), getsid(0));
+
+    printf("I'm child, I'm gonna create a grandchild for my parent.\n");
+    if ((pid = fork()) < 0) {
+      my_perror("error: fork grandchild");
+    } else if (pid == 0) { // grandchild
+      printf("I'm grandchild %d, my parent %d, my PGID %d, my SID %d\n",
+             getpid(), getppid(), getpgid(0), getsid(0));
+      sleep(3);
+      printf("I'm grandchild %d, my parent %d, my PGID %d, my SID %d\n\n",
+             getpid(), getppid(), getpgid(0), getsid(0));
+      return 0;
+    }
+    sleep(1);
+    printf("I'm child, I'm gonna create a new session for myself\n");
+    sid = setsid();
+    assert(getsid(0) == sid);
+    printf("I'm child %d, my parent %d, my PGID %d, my SID %d\n",
+           getpid(), getppid(), getpgid(0), getsid(0));
+    sleep(5); // wait for parent exiting.
+    printf("I'm child %d, my parent %d, my parent's SID %d, my PGID %d, my SID %d\n\n",
+           getpid(), getppid(), getsid(getppid()), getpgid(0), getsid(0));
+    return 0;
+  } else { // parent
+    assert(getsid(0) == sid);
+    sleep(2);
+    printf("I'm parent %d, my PGID %d, my SID %d\n",
+           getpid(), getpgid(0), getsid(0));
+  }
+
+  return 0;
+}
+
+/*
+> ./Debug/procgrp/sessid
+current session id: 49433
+I'm child 2716, my parent 2715, my PGID 2715, my SID 49433
+I'm child, I'm gonna create a grandchild for my parent.
+I'm grandchild 2717, my parent 2716, my PGID 2715, my SID 49433
+I'm child, I'm gonna create a new session for myself
+I'm child 2716, my parent 2715, my PGID 2716, my SID 2716
+I'm parent 2715, my PGID 2715, my SID 49433
+> I'm grandchild 2717, my parent 2716, my PGID 2715, my SID 49433
+
+I'm child 2716, my parent 1, my parent's SID 1, my PGID 2716, my SID 2716
+>
+
+ */
+```
+
 ## Controlling Terminal
  
  ![Process groups and sessions showing controlling terminal](<./images/Process groups and sessions showing controlling terminal.png>)
