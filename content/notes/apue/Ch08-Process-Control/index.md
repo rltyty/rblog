@@ -102,7 +102,7 @@ return values:
     for the child process.
 *   Most fields from the parent's `task_struct` are copied directly to the
     child's. This includes:
-    *   Process state (e.g., running, sleeping)
+    *   Process state (e.g., running, sleeping{intr/unintr}, stopped, zombie)
     *   CPU registers (copied from the parent's context at the time of the `fork` call)
     *   Scheduling information
     *   Signal handlers

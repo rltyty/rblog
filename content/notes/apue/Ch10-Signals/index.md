@@ -64,9 +64,29 @@ seo:
 
 ## Concepts
 
-- Name: `SIGXXXX`
-- Count: macOS and Linux: around 31, Solaris: 40
+Signals are asynchronous events, allow the manipulation of a process from
+outside its domain.
+
+When a signal occurs, we can tell the kernel to do one of three things. We
+call this the ***disposition*** of a signal, or the ***action*** associated
+with a signal.
+
+- Ignore the signal
+- Catch the signal via user defined signal-catching function
+- Apply the default action
+
+### Basic information
+
+- Signal Name: `SIGXXXX`
+- Signal Number: No 0 signal, beginning with 1.
 - Definition: `<signal.h>`
+- Count: macOS and Linux: around 31, Solaris: 40
+  - 31 signals <= 32, `__uint32_t` can holds `sigset_t` bit map
+  - modern Linux `sigset_t` can hold 1024 = 64 (unsigned long) * 16 signals
+  - modern Linux usually has 64 signals:
+    - 1–31 traditional
+    - 32–34 glibc reserved
+    - 35–64 real-time signals (queued, prioritized, and data-carrying)
 
 
 | Aspect           | Linux (glibc + kernel)                           | macOS (BSD-style libc)                             |
@@ -81,7 +101,7 @@ seo:
 
 #### Terminal-generated signals
 
-- Common terminal-generated signal mappings: 
+- Common terminal-generated signal mappings:
 
 | Key Combination | Signal Sent | Signal No | Default Action                     | Typical Use Case               |
 |-----------------|-------------|---------------|------------------------------------|---------------------------------|
@@ -130,11 +150,44 @@ isig icanon iexten echo echoe -echok -echonl -noflsh -tostop -echoprt echoctl ec
 
 ### Disposition of the Signal
 
-- Ignore
-- Catch
-- Let the default action apply.
+- Ignore the signal except for `SIGKILL` and `SIGSTOP`
+- Catch the signal via signal-catching function except for `SIGKILL` and `SIGSTOP`
+- Apply the default action
 
-**`SIGKILL`** and **`SIGSTOP`** cannot be ignored or caught.
+Every signal has a default action that the kernel will take if the process
+hasn't changed it.
+
+**`SIGKILL`** and **`SIGSTOP`** cannot be ignored or caught. It means the
+disposition of either signal cannot be altered and is always to apply the
+default action.
+
+`kill -KILL <PID>` always kills the process immediately
+`kill -STOP <PID>` always suspends the process immediately
+
+#### `SIGSTOP` and `SIGTSTP`
+
+
+| Signal      | Number (on your system) | Default action | Typical source                        | `strsignal()`          |
+| ----------- | ----------------------- | -------------- | ------------------------------------- | ---------------------- |
+| **SIGSTOP** | 17 (Linux: often 19)    | Stop (suspend) | Sent only by `kill` or kernel         | `"Suspended (signal)"` |
+| **SIGTSTP** | 18 (Linux: often 20)    | Stop (suspend) | Sent by terminal driver on `<CTRL-Z>` | `"Suspended"`          |
+
+
+#### Which signals can terminate `pause()` in an infinite loop?
+
+```c
+while(1) pause();
+```
+
+If a process hasn't change its signal dispositions, then all signals are at
+their **default disposition**.
+
+- Signals with default action = **terminate** will kill the process.
+  - `SIGINT`, `SIGQUIT`, `SIGKILL`, `SIGTERM`, `SIGHUP`, `SIGSEGV`, etc.
+- Signals with default action = **stop** will suspend the process.
+  - `SIGSTOP`, `SIGTSTP`, `SIGTTIN`, `SIGTTOU`, etc.
+- Signals with default action = **ignore** will be discarded.
+  - `SIGURG`, `SIGCHLD`, `SIGCONT`, `SIGWINCH`, etc.
 
 ### Summary
 
@@ -458,13 +511,31 @@ drwxr-xr-x 20 root   wheel  640 Jul 17  2024 ../
 
 ### Example 3: Register SIG_IGN disposition to signals SIGINT and SIGQUIT
 
-Interactive shells usually ignore the interrupt and quit signals for a
-background process by set the disposition of the two signals to be ignored so
-that when `<CTRL-C>` or `<CTRL-\>` is typed, background processes are
-prevented from being interrupted or quitting.
+In **earlier** version of UNIX, **older** interactive shells have:
+- No concept of process groups
+- No `tcsetpgrp(3)`
 
-Many interactive programs that catch these two signals have code that looks
-like
+This means "No job control" and no `bg`, `fg` commands. All children of a
+shell shared the same controlling terminal and got the same terminal-generated
+signals.
+
+To avoid terminal-generated signals like `CTRL-C` m affecting background
+processes, the shell manually set `SIGINT` and `SIGQUIT` dispositions to
+`SIG_IGN` for background processes.
+
+In no-job-control era, by "foreground" and "background" , it means:
+
+- Foreground
+  - The shell `fork()`s and `exec()`s the program
+  - The shell `wait()`s or `waitpid()`s for the child
+  - While waiting, the shell is blocked.
+- background `cmd &`
+  - The shell `fork()`s but doesn't wait for its child.
+  - The shell remains usable while the child runs.
+
+An interactive program during that time wants to catch `SIGINT` must first
+check if it inherited ignore; if so, it continues to ignore. Otherwise, it
+installs its own handler.
 
 ```c
 void sig_int(int), sig_quit(int);
@@ -474,11 +545,53 @@ if (signal(SIGQUIT, SIG_IGN) != SIG_IGN)
   signal(SIGQUIT, sig_quit);
 ```
 
-The process catches the signal only if the signal is not currently being
-ignored.
+In **modern** Unix shell with job control (process groups and `tcsetpgrp`),
+the terminal driver only sends signals to the foreground process group.
+Background jobs simply never receive `SIGINT`/`SIGQUIT` from the terminal. The
+shell doesn't need to set them to `SIG_IGN` anymore — though many still do
+around exec() to avoid races. A race here is about an incoming interrupt
+during a small time window between the shell `fork()`s a children and
+`exec()`s a new command.
 
+***NOTE:***
 A limitation of `signal()`: unable to determine the current disposition of a
 signal without changing the disposition (exchange: set new, return old).
+
+## Process States
+
+On a Linux system, `ps` state column
+
+
+| Code  | Meaning                                                               |
+| ----- | --------------------------------------------------------------------- |
+| **R** | Running (or runnable, on run queue)                                   |
+| **S** | Interruptible sleep (waiting for event/signal)                        |
+| **D** | Uninterruptible sleep (usually I/O wait)                              |
+| **T** | Stopped (by signal or tracing/debugging)                              |
+| **t** | Tracing stop (specifically being traced)                              |
+| **Z** | Zombie (terminated, not reaped)                                       |
+| **X** | Dead (shouldn’t appear; internal use)                                 |
+| **I** | Idle kernel thread (Linux-specific, seen with `ps` on recent kernels) |
+
+
+- Sleeping (also **blocked**): process not on CPU and waiting for event
+  - interruptible sleep (`S` in `ps`)
+    - blocked by user-space visible I/O system call, `read(2)`, `write(2)`
+    - blocked by timer, e.g. `pause(3)`
+  - uninterruptible sleep (`D` in `ps`, on Linux; `U`, on macOS)
+    - signals cannot be delivered until the process wakes naturally 
+    - critical kernel paths, I/O with hardware where interruption could
+      corrupt data
+
+- Stopped (also **suspended**): process in halted state
+  - `T` in `ps`
+  - still occupy memory and keep its resources open
+  - can be resumed by `SIGCONT` signal
+    - via `kill`
+    - via shell job control commands:
+      - `bg`: continue in the background
+      - `fg`: continue and bring it back to foreground
+
 
 ## Reentrant Functions
 
@@ -525,7 +638,24 @@ _Exit         kill          renameat      sockatmark    waitpid
 _exit         link          rmdir         socket        write
 ```
 
-## `kill(2)` and `raise(3)` Functions
+## Reliable Signals
+
+### Life Cycle States
+
+- **Generated**: event that raises a signal.
+- **Pending**: signal has been generated but not yet delivered.
+- **Blocked**: signal is masked in the process’s signal mask; if generated,
+           it stays pending until unblocked.
+- **Delivered**: kernel acts on the signal (default action or custom handler).
+
+We say that a signal is **delivered** to a process when the action for a
+signal is **taken**.
+
+Each process has a ***signal mask*** that defines the set of signals currently
+blocked from delivery to that process. If the bit is on for a given signal,
+that signal is currently blocked (See `sigprocmask(2)`, `sigset_t`).
+
+### `kill(2)` and `raise(3)` Functions
 
 `kill(2)` sends a signal to a process or a group of processes. `raise(3)`
 allows a process send a signal to itself.
@@ -544,7 +674,154 @@ is that the real or effective user ID of the sender has to equal the real or
 effective user ID of the receiver. One special case: if the signal being sent
 is `SIGCONT`, a process can send it to any other process in the same session.
 
+### `alarm(3)` and `pause(3)`
 
-## `sigaction(2)`
+- the kernel schedules `SIGALRM` to be sent after TIMEOUT seconds
+- install custom handler before call `alarm(3)` or default action is terminate
+- only one alarm clock per process, refreshed by every call returning unslept
+  time of last alarm
+- `alarm(0)` voids the current alarm and `SIGALRM` will not be delivered
+- `pause(3)` causes the calling thread pause until a signal is received from
+  `kill(2)` or an interval timer. (See `setitimer(2)`.)
+
+#### Example 1: Default action - terminate
+```c
+int main(int argc, char *argv[]) {
+  alarm(5); // modern version: setitimer(2)
+  pause();  // modern version: sigsuspend(2)
+            // race-condition-safe, precise control over signal masking
+  return 0;
+}
+
+/*
+
+> ./Debug/signals/sigalarm
+[2]    16246 alarm      ./Debug/signals/sigalarm
+> echo $?
+142           <- (128 + SIGALRM(14))
+
+ */
+```
+
+#### Example 2: Pause until `SIGALRM` is received
+
+```c
+volatile sig_atomic_t got_alarm = 0;
+
+void sig_alrm(int);
+
+int main(int argc, char *argv[]) {
+  pid_t pid;
+  if ((pid = fork()) < 0) {
+    my_perror("error: fork");
+  } else if (pid == 0) { // child
+    sleep(2);
+    printf("I'm child: %d, my parent ps info:\n", getpid());
+    ps(getppid());
+    exit(0);
+  } else {
+    if (signal(SIGALRM, sig_alrm) == SIG_ERR) {
+      my_perror("error: signal");
+    }
+    printf("I'm parent: %d\n", getpid());
+    alarm(3);
+    while (got_alarm == 0) {
+      pause();    // returns after any caught signal is delivered
+                  // during pause, the process is still in running/sleep state
+                  // not suspended
+    }
+    alarm(0);
+    printf("Alarm: Time out!\n");
+  }
+  return 0;
+}
+
+void sig_alrm(int signo) {
+  got_alarm = 1;
+  printf("sig_alrm handler: I'm: %d\n", getpid());
+}
+
+/*
+
+> ./Debug/signals/sigalarm2
+I'm parent: 74574
+I'm child: 74575, my parent ps info:
+  UID   PID  PPID  PGID   SESS TTY      STAT COMM
+  501 74574 49433 74574      0 ttys001  S+   ./Debug/signals/sigalarm2
+sig_alrm handler: I'm: 74574
+Alarm: Time out!
+
+ */
+```
+
+#### Example 3: Set timeout for "slow" I/O
+
+```c
+...
+static void sig_alrm(int signo) {};
+
+int main(void) {
+...
+  signal(SIGALRM, sig_alrm);
+  alarm(TIMEOUT);
+  // slow I/O, read(), write() on some slow devices
+  alarm(0);
+...
+```
+
+##### Problems
+
+- race condition between first `alarm` call and "slow" I/O call. If the kernel
+  blocks the process between the two calls for longer than the alarm period,
+  then signal could be delivered before the I/O syscall. When the I/O call
+  blocks the process, no `SIGALRM` being to generated again.
+- if `sigaction.sa_flags = SA_RESTART`, make the process automatically restart
+  interrupted syscalls
+
+In both cases, the aim to set a timeout to a slow operation is not achieved.
+
+##### Fixes
+
+###### Option 1: `setjmp(3)` and `longjmp(3)`
+
+Drawbacks: Bypass stack frame unwinding, unnecessary `longjmp` after
+successful "slow" I/O but before `alarm(0)`. Not signal-safe.
+
+```c
+static jmp_buf env;
+static void sig_alrm(int signo) {
+  longjmp(env, 1);
+}
+
+int main(void) {
+  ...
+  if (signal(SIGALRM, sig_alrm) == SIG_ERR) {
+    my_perror("error: signal");
+    return 1;
+  }
+
+  if (setjmp(env) != 0) { // Returns 0 first time, 1 if longjmp called
+    printf("Time out!\n");
+    return 1;
+  }
+
+  alarm(TIMEOUT);
+  // slow I/O
+  alarm(0);
+
+...
+}
+```
+
+###### Option 2: Use `select()`/`poll()` with Timeout (Suggested)
+
+###### Option 3: Use Thread-Based Timeouts 
+
+Revisit Option 2&3 later.
+
+
+### sigset_t
+
+### `sigaction(2)`
 
 

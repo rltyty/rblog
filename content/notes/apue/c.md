@@ -137,7 +137,7 @@ internals and ABI-specific details. So the compiler (GCC/Clang) provides it.
 
 ### keywords
 
-#### restrict
+#### `restrict`
 
 - since `C99`
 - a contract between the programmer and the compiler
@@ -148,6 +148,21 @@ internals and ABI-specific details. So the compiler (GCC/Clang) provides it.
 
 With `restrict` the compiler can assure no aliasing, enabling aggressive
 optimization (e.g., reordering instructions, cache values in registers).
+
+#### `volatile`
+
+Tells the compiler don't optimize this variable or cache its value.
+
+Compiler optimizations block includes:
+
+- No register caching: Every read/write goes to memory.
+- No reordering: Operations stay in program order (but CPU may still reorder;
+  use barriers if needed).
+
+Mainly used for:
+- Variables shared with signal handlers
+- Multi-threaded variables (though `atomic`, mutex are preferred)
+- Memory-mapped hardware registers
 
 #### `sizeof`
 
