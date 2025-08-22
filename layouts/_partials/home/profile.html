@@ -1,10 +1,9 @@
 {{- $profile := .Site.Params.home.profile -}}
 <div class="home-profile">
-    {{- $banner := $profile.banner -}}
-    {{- if $banner -}}
-    <img src="{{ $banner }}" alt="Banner", class="banner-image">
-    {{- end -}}
-
+  {{- with $profile.banner -}}
+    {{- $image := resources.Get . -}}
+    <img src="{{ $image.RelPermalink }}" alt="Banner" class="banner-image">
+  {{- end -}}
 
     {{- $avatar := $profile.avatarURL -}}
     {{- with $profile.gravatarEmail -}}
