@@ -76,6 +76,109 @@ clang-format -style=llvm -dump-config > .clang-format
 
 #### By default, `IndentWidth: 2`
 
+
+### include glibc source to navigate with clangd
+
+#### Build glibc source and generate compile_commands.json
+
+##### Install build essentials
+```sh
+sudo apt install -y make gcc texinfo make binutils gawk bison perl sed \
+  python3 python3-pexpect autoconf gettext
+```
+
+##### Build
+
+```sh
+cd $SRC_ROOT
+
+mkdir build
+cd build
+../configure --prefix=$SRC_ROOT/install
+bear -- make -j$(nproc)
+# make install          # no need if only navigate sources in editor
+```
+
+#### Configure up project specific `.clangd`
+
+```yaml
+CompileFlags:
+  CompilationDatabase: /home/<user>/<path-to-glibc-src-root>/build
+  Add: [
+    # Include glibc source headers (to enable jump to implementation)
+    -I/home/<user>/<path-to-glibc-src-root>/include,
+    -I/home/<user>/<path-to-glibc-src-root>,
+    -I/home/<user>/<path-to-glibc-src-root>/sysdeps/unix/sysv,
+    -I/home/<user>/<path-to-glibc-src-root>/sysdeps/unix/sysv/linux,
+
+    # Clang built-in headers, change to your version
+    -isystem/usr/lib/llvm-22/lib/clang/22/include,
+
+    # System libc headers (searched after your glibc sources)
+    -isystem/usr/include,
+    -isystem/usr/local/include
+  ]
+```
+#### Navigate `<C-]>`
+
+Example:
+
+```c
+#include <signal.h>
+
+int main(int argc, char *argv[]) {
+...
+  sigaddset(&set, SIGQUIT);
+...
+}
+```
+To inspect `sigaddset()` implementation code, navigation order:
+
+`glibc-2.36/signal/signal.h`
+`glibc-2.36/signal/sigaddset.c`
+`glibc-2.36/sysdeps/unix/sysv/linux/sigsetops.h`
+
+```c
+
+#define __sigmask(sig) \
+  (1UL << (((sig) - 1) % ULONG_WIDTH))
+
+static inline unsigned long int
+__sigword (int sig)
+{
+  return (sig - 1) / ULONG_WIDTH;
+}
+
+static inline void
+__sigaddset (sigset_t *set, int sig)
+{
+  unsigned long int mask = __sigmask (sig);
+  unsigned long int word = __sigword (sig);
+  set->__val[word] |= mask;
+}
+```
+
+`/usr/include/limits.h`
+
+```c
+# ifndef ULONG_WIDTH
+#  define ULONG_WIDTH __WORDSIZE
+# endif
+```
+
+`glibc-2.36/sysdeps/x86/bits/wordsize.h`
+
+```c
+#if defined __x86_64__ && !defined __ILP32__
+# define __WORDSIZE	64
+#else
+# define __WORDSIZE	32
+#define __WORDSIZE32_SIZE_ULONG		0
+#define __WORDSIZE32_PTRDIFF_LONG	0
+#endif
+```
+
+
 ## Use gcc/clang to check "include" search pathes on both macOS and Linux
 
 ```sh
