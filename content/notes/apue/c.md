@@ -1135,14 +1135,15 @@ int main() {
 
 ## Symbol types in `ELF` (`nm` / `objdump -T`)
 
+### Types
 - T → symbol is in the text (code) section, strong definition
 - U → undefined (imported from another object)
 - B → uninitialized data (BSS)
 - D → initialized data
 - W → weak symbol (can be overridden by another strong definition)
 
+### Example
 E.g. The meaning of a output line like `00000000000d3e80 W fork@@GLIBC_2.2.5`
-
 - `00000000000d3e80`: address of the symbol inside `libc.so`
 - `W`: `fork` is a weak alias (defined with `weak_alias (__libc_fork, fork)`)
 - `fork@@GLIBC_2.2.5`: export symbol `fork` with `GLIBC_2.2.5` namespace
