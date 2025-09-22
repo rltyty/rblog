@@ -197,6 +197,24 @@ Two typical use of `fork()`:
 
   - `spawn` is a concept to combine `fork()` and `exec()` into one operation.
 
+### `fork(2)` symbol resolution path (`glibc`)
+
+```
+user code
+   ↓
+unistd.h (prototype: fork())
+   ↓
+fork (public symbol in libc.so, weak alias)
+   ↓
+__libc_fork (implementation: run handlers, call _Fork)
+   ↓
+_Fork (generic wrapper in posix/_Fork.c)
+   ↓
+clone.S (arch-specific syscall stub)
+   ↓
+kernel (do_fork / kernel_clone in linux-6.1.147/kernel/fork.c)
+```
+
 ## `exec()` functions
 
 ![seven exec()](<./images/Relationship of the seven exec functions.png>)
@@ -322,6 +340,8 @@ grandchild: PID[60433]
 */
 ```
 
+## Examples
+
 ### `system(3)` Function
 
 ```c
@@ -363,6 +383,7 @@ interrupt causing waitpid() to return -1.
  */
 ```
 
+See another version has signal handling in [Ch10 Signals](/notes/apue/ch10-signals/#system3)
 
 ## Process Scheduling `nice()`
 

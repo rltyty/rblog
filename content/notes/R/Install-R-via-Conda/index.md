@@ -57,7 +57,11 @@ library:
     # someJS = "https://cdn.example.com/some.js"
 seo:
   images: []
-  # ...
+
+# other options
+markmap:
+  initialExpandLevel:
+    - 2     # only leaf node collapsed
 ---
 
 <!--more-->

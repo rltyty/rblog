@@ -72,3 +72,5 @@ seo:
 
 [javatest](https://github.com/rltyty/javatest)
 
+[MyTV](http://korhal.h4ck.me:2100/share/iptv/mytv.m3u)
+

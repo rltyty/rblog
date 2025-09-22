@@ -1,5 +1,5 @@
 ---
-title: "Ch02 Unix Stdandard"
+title: "Ch02 Unix Standard"
 subtitle: ""
 date: 2025-07-28T15:21:10+08:00
 lastmod: 2025-07-28T15:21:10+08:00
@@ -335,6 +335,55 @@ To enable 1999 ISO C extensions in the gcc C compiler,  use `-std=c99` option
 ```sh
     gcc -D_XOPEN_SOURCE=700 -std=c99 file.c -o file
 ```
+
+#### System header for feature definition on Linux and macOS
+
+- Linux: `<features.h>`
+- macOS: `<sys/cdefs.h>`
+
+```c
+void test_features() {
+#ifdef __linux__
+  printf("On Linux, <fcntl.h> includes <features.h>, in which compilation "
+         "environment is determined and macros are defined.\n");
+#ifdef _GNU_SOURCE
+  printf("When compiled with _GNU_SOURCE, \n");
+#endif
+#ifdef _LARGEFILE64_SOURCE
+  printf("_LARGEFILE64_SOURCE was defined to be %d.\n", _LARGEFILE64_SOURCE);
+#endif
+#ifdef __USE_LARGEFILE64
+  printf("__USE_LARGEFILE64 was defined to be %d further.\n",
+         __USE_LARGEFILE64);
+#endif
+#ifdef O_LARGEFILE
+  printf("O_LARGEFILE = %d.\n", O_LARGEFILE);
+#endif
+#ifdef __USE_FILE_OFFSET64
+  printf("__USE_FILE_OFFSET64 = %d.\n", __USE_FILE_OFFSET64); // not defined
+#endif
+#ifdef __O_LARGEFILE
+  printf("__O_LARGEFILE defined.\n");
+#endif
+
+  // NOTE:
+  // open64.c (glibc:
+  // /usr/src/glibc/glibc-2.36/sysdeps/unix/sysv/linux/open64.c)
+  //  __libc_open64
+  //    return SYSCALL_CANCEL (openat, fd, file, oflag | O_LARGEFILE, mode);
+
+#elif defined(__APPLE__)
+  printf("On macOS, <fcntl.h> use <sys/cdefs.h> for feature determnination:\n");
+#ifdef _DARWIN_C_SOURCE
+  printf("_DARWIN_C_SOURCE\n");
+#endif
+#ifdef __DARWIN_UNIX03
+  printf("__DARWIN_UNIX03 \n");
+#endif
+#endif
+}
+```
+
 
 ### Primitive System Data Types
 

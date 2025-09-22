@@ -342,9 +342,11 @@ argv[2]: arg2
 
 ## Memory Layout
 
+### Logical layout of a process's virtual memory.
+
 ![Typical memory arrangement](<images/Typical memory arrangement.png>)
 
-### Stack Segment
+#### Stack Segment
 
 Automatic storage duration, variables are declared in a function:
 
@@ -352,7 +354,7 @@ Automatic storage duration, variables are declared in a function:
   when it returns.
 - Uninitialized variables contain garbage values.
 
-### Data Segment
+#### Data Segment
 
 Global or static storage duration, variables declared globally or as static
 in a function:
@@ -373,7 +375,7 @@ zero-initialized, no matter what storage duration the array is in.
 3. Omitted size (compiler determines): `int numbers[] = {10, 20, 30};`
 4. Designated initializers (C99+): `int numbers[5] = {[2] = 30, [0] = 10};`
 
-### Inspect an executable binary layout (`size` or `otool`)
+#### Inspect an executable binary layout (`size` or `otool`)
 
 ```sh
 #
@@ -384,6 +386,73 @@ zero-initialized, no matter what storage duration the array is in.
 #    1815     648      16    2479     9af ./Debug/procenv/execve
 
 ```
+
+### VIRT/RSS/Shared/Private's Perspective of Memory Layout of a Process
+
+When a process runs, its memory can be divided into:
+
+- Virtual Memory
+  - The total address space the process has allocated.
+  - Includes code, heap, stack, shared libs, memory-mapped files, etc.
+  - Can be much larger than physical RAM, since the OS uses virtual memory.
+- Resident Set Size(RSS)
+  - The portion of that virtual memory actually loaded into physical RAM.
+  - i.e. pages that are “resident” in memory, not swapped out.
+  - This is what really matters for system memory pressure.
+  - A memory leak increases RES steadily.
+  - If RES grows too large, the system may swap or kill processes.
+  - A big VIRT but small RES is usually harmless (lots of mappings but not
+    much RAM used).
+- Shared vs Private
+  - Part of RSS may be shared (libraries, shared memory).
+  - The rest is private (your heap, stack, `malloc()`ed).
+
+Example:
+
+```sh
+  PID USER  PR  NI  VIRT   RES   SHR S %CPU %MEM TIME+ COMMAND
+12345 you   20   0  120m   40m  5.0m S  0.0  1.2  0:00 myprog
+```
+
+### Relationship of the two layouts
+
+- APUE layout = blueprint of virtual address space.
+- RSS/VIRT/SHR = runtime measurements overlayed on that blueprint.
+
+A simplified combined diagram
+
+```text
+High Addresses
+ ┌──────────────────────────────┐
+ │ Args + Environment           │
+ │   - small, negligible VIRT/RSS
+ ├──────────────────────────────┤
+ │ Stack (grows down)           │
+ │   - VIRT: reserved per thread
+ │   - RSS: frames actually used
+ ├──────────────────────────────┤
+ │ Memory-mapped regions        │
+ │   - shared libs, files, anon
+ │   - VIRT: can be large
+ │   - RSS: only touched pages
+ ├──────────────────────────────┤
+ │ Heap (malloc/new, grows up)  │
+ │   - VIRT: expandable
+ │   - RSS: grows as you touch allocated memory
+ │   - Leaks → RSS growth
+ ├──────────────────────────────┤
+ │ Data (globals, statics)      │
+ │   - VIRT: .data + .bss
+ │   - RSS: when loaded into RAM
+ ├──────────────────────────────┤
+ │ Text (code)                  │
+ │   - read-only, shareable
+ │   - VIRT: fixed
+ │   - RSS: only executed pages
+ └──────────────────────────────┘
+Low Addresses
+```
+
 
 ##  Memory allocation
 
@@ -414,6 +483,29 @@ the `malloc` pool.
 
 - `free`:  Find memory metadata by the help of `ptr` and know the size of
 memory to be freed.
+
+### Memory Leak
+
+For long-running processes (servers, daemons, GUI apps), unreleased
+allocations accumulate and finally cause real memory leak problem.
+
+Example: It's the caller's responsibility to `free()` `malloc()`ed strings.
+
+```c
+char *make_str(void) {
+    char *p = malloc(100);
+    if (!p) return NULL;
+    strcpy(p, "hello");
+    return p;   // caller must free()
+}
+
+int main() {
+    char *s = make_str();
+    // ... do something with s
+    free(s); // The caller is responsible for this call
+    return 0;
+}
+```
 
 ## `setjmp` and `longjmp`
 

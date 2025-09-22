@@ -57,7 +57,11 @@ library:
     # someJS = "https://cdn.example.com/some.js"
 seo:
   images: []
-  # ...
+
+# other options
+markmap:
+  initialExpandLevel:
+    - 2     # only leaf node collapsed
 ---
 
 **Kubernetes** (k8s, Kate's) is an open-source system for automating deployment,
