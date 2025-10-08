@@ -240,8 +240,8 @@ int main(int argc, char *argv[]) {
 Every signal has a default action that the kernel will take if the process
 hasn't changed it.
 
-**`SIGKILL`** and **`SIGSTOP`** cannot be ignored or caught. It means the
-disposition of either signal cannot be altered and is always to apply the
+**`SIGKILL`** and **`SIGSTOP`** cannot be ignored, caught or blocked. It means
+the disposition of either signal cannot be altered and is always to apply the
 default action.
 
 `kill -KILL <PID>` always kills the process immediately

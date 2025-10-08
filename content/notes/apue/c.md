@@ -1130,9 +1130,6 @@ int main() {
 }
 ```
 
-[1]: https://clangd.llvm.org/installation#compile_commandsjson
-[2]: https://clang.llvm.org/docs/ClangFormat.html#standalone-tool
-
 ## Symbol types in `ELF` (`nm` / `objdump -T`)
 
 ### Types
@@ -1148,3 +1145,107 @@ E.g. The meaning of a output line like `00000000000d3e80 W fork@@GLIBC_2.2.5`
 - `W`: `fork` is a weak alias (defined with `weak_alias (__libc_fork, fork)`)
 - `fork@@GLIBC_2.2.5`: export symbol `fork` with `GLIBC_2.2.5` namespace
 
+
+## Debugging Multi-thread Program
+
+### LLDB
+
+#### Basic commands
+```sh
+> lldb <executable> [args]
+(lldb) run
+(lldb) b -f Ex11_3_workerthrd.c -n job_find
+(lldb) thread list
+(lldb) thread select 2
+(lldb) thread backtrace [all]   <-- same to `(lldb) bt all`
+(lldb) bt all
+(lldb) frame select 1           <-- same to `fr s 1`
+(lldb) frame variable           <-- same to `fr v`
+(lldb) frame variable
+```
+
+#### Set breakpoint and debug multiple threads
+
+```sh
+> lldb
+(lldb) file ./Debug/threads/Ex11_3_workerthrd
+Current executable set to '.../Debug/threads/Ex11_3_workerthrd' (x86_64).
+(lldb) b job_fetch_atomic
+Breakpoint 1: where = Ex11_3_workerthrd`job_fetch_atomic + 16 at Ex11_3_workerthrd.c:150:15, address = 0x0000000100002fc0
+(lldb) run
+Process 77141 launched: '.../Debug/threads/Ex11_3_workerthrd' (x86_64)
+
+MainThread: Add 8 jobs.
+Process 77141 stopped
+* thread #2, stop reason = breakpoint 1.1
+    frame #0: 0x0000000100002fc0 Ex11_3_workerthrd`job_fetch_atomic(pQ=0x00007ff7bfefe108, tid=0x0000700001afa000) at Ex11_3_workerthrd.c:150:15
+   147   * Atomic find, wait and remove a job for the given thread ID
+   148   */
+   149  struct job *job_fetch_atomic(struct queue *pQ, pthread_t tid) {
+-> 150    struct job *pJob = NULL;
+   151    if (pthread_mutex_lock(&pQ->q_lock) != 0) return (NULL);
+   152    while ((pJob = job_find(pQ, tid)) == NULL) {
+   153      pthread_cond_wait(&pQ->q_cond, &pQ->q_lock);
+  thread #3, stop reason = breakpoint 1.1
+    frame #0: 0x0000000100002fc0 Ex11_3_workerthrd`job_fetch_atomic(pQ=0x00007ff7bfefe108, tid=0x0000700001b7d000) at Ex11_3_workerthrd.c:150:15
+   147   * Atomic find, wait and remove a job for the given thread ID
+   148   */
+   149  struct job *job_fetch_atomic(struct queue *pQ, pthread_t tid) {
+-> 150    struct job *pJob = NULL;
+   151    if (pthread_mutex_lock(&pQ->q_lock) != 0) return (NULL);
+   152    while ((pJob = job_find(pQ, tid)) == NULL) {
+   153      pthread_cond_wait(&pQ->q_cond, &pQ->q_lock);
+  thread #4, stop reason = breakpoint 1.1
+    frame #0: 0x0000000100002fc0 Ex11_3_workerthrd`job_fetch_atomic(pQ=0x00007ff7bfefe108, tid=0x0000700001c00000) at Ex11_3_workerthrd.c:150:15
+   147   * Atomic find, wait and remove a job for the given thread ID
+   148   */
+   149  struct job *job_fetch_atomic(struct queue *pQ, pthread_t tid) {
+-> 150    struct job *pJob = NULL;
+   151    if (pthread_mutex_lock(&pQ->q_lock) != 0) return (NULL);
+   152    while ((pJob = job_find(pQ, tid)) == NULL) {
+   153      pthread_cond_wait(&pQ->q_cond, &pQ->q_lock);
+(lldb) thread select 3
+* thread #3, stop reason = breakpoint 1.1
+    frame #0: 0x0000000100002fc0 Ex11_3_workerthrd`job_fetch_atomic(pQ=0x00007ff7bfefe108, tid=0x0000700001b7d000) at Ex11_3_workerthrd.c:150:15
+   147   * Atomic find, wait and remove a job for the given thread ID
+   148   */
+   149  struct job *job_fetch_atomic(struct queue *pQ, pthread_t tid) {
+-> 150    struct job *pJob = NULL;
+   151    if (pthread_mutex_lock(&pQ->q_lock) != 0) return (NULL);
+   152    while ((pJob = job_find(pQ, tid)) == NULL) {
+   153      pthread_cond_wait(&pQ->q_cond, &pQ->q_lock);
+(lldb) bt
+* thread #3, stop reason = breakpoint 1.1
+  * frame #0: 0x0000000100002fc0 Ex11_3_workerthrd`job_fetch_atomic(pQ=0x00007ff7bfefe108, tid=0x0000700001b7d000) at Ex11_3_workerthrd.c:150:15
+    frame #1: 0x000000010000306a Ex11_3_workerthrd`worker_thrd(arg=0x00007ff7bfefe108) at Ex11_3_workerthrd.c:167:24
+    frame #2: 0x00007ff801c914e1 libsystem_pthread.dylib`_pthread_start + 125
+    frame #3: 0x00007ff801c8cf6b libsystem_pthread.dylib`thread_start + 15
+(lldb) fr i
+frame #0: 0x0000000100002fc0 Ex11_3_workerthrd`job_fetch_atomic(pQ=0x00007ff7bfefe108, tid=0x0000700001b7d000) at Ex11_3_workerthrd.c:150:15
+(lldb) fr v
+(queue *) pQ = 0x00007ff7bfefe108
+(pthread_t) tid = 0x0000700001b7d000
+(job *) pJob = NULL
+(lldb) fr s 1
+frame #1: 0x000000010000306a Ex11_3_workerthrd`worker_thrd(arg=0x00007ff7bfefe108) at Ex11_3_workerthrd.c:167:24
+   164    struct queue *pQ = arg;
+   165    pthread_t tid = pthread_self();
+   166    for (;;) {
+-> 167      struct job *pJob = job_fetch_atomic(pQ, tid);
+   168      if (pJob != NULL) {
+   169        printf(
+   170            "Job ID: [%d], Job Thread: [%d:0x%lx], Current Thread ID: [0x%lx]\n",
+(lldb) fr i
+frame #1: 0x000000010000306a Ex11_3_workerthrd`worker_thrd(arg=0x00007ff7bfefe108) at Ex11_3_workerthrd.c:167:24
+(lldb) fr v
+(void *) arg = 0x00007ff7bfefe108
+(queue *) pQ = 0x00007ff7bfefe108
+(pthread_t) tid = 0x0000700001b7d000
+(job *) pJob = NULL
+(lldb) expr pJob == NULL
+(bool) $0 = true
+```
+
+
+[1]: https://clangd.llvm.org/installation#compile_commandsjson
+[2]: https://clang.llvm.org/docs/ClangFormat.html#standalone-tool
