@@ -22,7 +22,7 @@ while IFS= read -r line; do
   # 4) ignore empty lines
   # NOTE: [[:space:]] is POSIX portable works for all variants of grep, sed,
   # awk, etc. \s is PCRE only, not POSIX.
-  trimmed=$(awk '
+  trimmed=$(printf '%s\n' "$line" | awk '
   {
     line = $0
     inquote2 = 0
@@ -37,7 +37,7 @@ while IFS= read -r line; do
     }
     gsub(/^[[:space:]]+|[[:space:]]+$/, "", out)
     print out
-  }' <<< "$line")
+  }')
   if [ -n "$trimmed" ]; then
     minddocs="$minddocs
 $trimmed"
