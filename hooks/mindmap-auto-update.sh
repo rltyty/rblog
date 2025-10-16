@@ -40,8 +40,8 @@ $trimmed"
   fi
 done < "$MINDMAP_MARKDOWN_LIST"
 
-# Find all staged Markdown files
-staged_md_files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.md$' || true)
+# Find all staged Markdown files in Added/Copied/Modified/Renamed
+staged_md_files=$(git diff --cached --name-only --diff-filter=ACMR | grep '\.md$' || true)
 
 # Exit early if no markdown changes
 [ -z "$staged_md_files" ] && exit 0

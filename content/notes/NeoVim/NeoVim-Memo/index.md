@@ -10,7 +10,7 @@ description: ""
 license: ""
 images: []
 
-tags: ['Vim', 'Neovim', 'Memo']
+tags: ['Vim', 'Neovim', 'Nvim', 'Memo']
 categories: ['IT', 'Editing']
 
 featuredImage: ""

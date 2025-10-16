@@ -1,8 +1,8 @@
 ---
-title: "C"
+title: "Notes on C"
 subtitle: ""
-date: 2025-07-28T15:21:10+08:00
-lastmod: 2025-07-28T15:21:10+08:00
+date: 2025-10-16T15:26:49+08:00
+lastmod: 2025-10-16T15:26:49+08:00
 draft: false
 author: "rltyty"
 authorLink: ""
@@ -57,13 +57,14 @@ library:
     # someJS = "https://cdn.example.com/some.js"
 seo:
   images: []
+  # ...
 
-# other options
 markmap:
   initialExpandLevel:
     - 2     # only leaf node collapsed
 ---
 
+<!--more-->
 ## [View Source Code of C/C++/Rust & Dart Projects]( https://codebrowser.dev )
 
 - [Glibc](https://codebrowser.dev/glibc/glibc/)
