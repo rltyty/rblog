@@ -44,25 +44,23 @@ $trimmed"
   fi
 done < "$MINDMAP_MARKDOWN_LIST"
 
-# Find all staged Markdown files in Added/Copied/Modified/Renamed
-staged_md_files=$(git diff --cached --name-only --diff-filter=ACMR | grep '\.md$' || true)
+# Generate mind maps and copy to static/mindmaps
+for md in $minddocs; do
+    # Generate mind map
+    printf "Generate mindmap for: [%s].\n" "$md"
+    markmap --no-open "$md"
 
-# Exit early if no markdown changes
-[ -z "$staged_md_files" ] && exit 0
-
-# Update mindmaps for files appear in both minddocs and staged_md_files
-IFS='
-'
-for f in $staged_md_files; do
-  for md in $minddocs; do
-    f_lc=$(printf '%s' "$f" | tr '[:upper:]' '[:lower:]')
-    md_lc=$(printf '%s' "$md" | tr '[:upper:]' '[:lower:]')
-    if [ "$f_lc" = "$md_lc" ]; then
-      printf "Update mindmap for: [%s].\n" "$md"
-      markmap --no-open "$md"
-      git add "${md%.md}.html"
-      break
+    html=${md%.md}.html
+    dir="$(dirname "$md")"
+    rel_dir="${dir#content/notes}"
+    mkdir -p "static/mindmaps/$rel_dir"
+    cp "$html" "static/mindmaps/$rel_dir"
+    # copy resources: PDF document
+    find "$dir" -maxdepth 1 -type f -name '*.pdf' -exec cp {} "static/mindmaps/$rel_dir/" \;
+    # copy resources: images
+    if [ -d "$dir/images" ]; then
+      mkdir -p "static/mindmaps/$rel_dir/images"
+      cp -r "$dir/images/." "static/mindmaps/$rel_dir/images/"
     fi
-  done
+  fi
 done
-unset IFS
