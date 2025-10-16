@@ -1,0 +1,5 @@
+#!/bin/sh
+
+set -e
+
+./hooks/mindmap-auto-update.sh

@@ -436,6 +436,12 @@ int pthread_spin_unlock(pthread_spinlock_t *lock);
                         // All return: 0 if OK, error number on failure
 ```
 
+`pshared`:
+
+- `PTHREAD_PROCESS_SHARED`: can be acquired by threads from different process
+- `PTHREAD_PROCESS_PRIVATE`: only acquired by threads within the process
+  initializes the spin lock
+
 ### Barriers
 
 Barriers are a synchronization mechanism that can be used to coordinate
