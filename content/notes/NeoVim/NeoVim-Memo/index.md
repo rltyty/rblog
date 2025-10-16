@@ -208,7 +208,7 @@ cannot be set by vim.o
   because `modifiable` option is set off by help. Turn it on by
   `set nomodifiable`.
 
-### 11. Show current buffer file's full path: `<c-g>``
+### 11. Show current buffer file's full path: `<c-g>`
 
 ### 12. Neovim terminal mode
 ```
