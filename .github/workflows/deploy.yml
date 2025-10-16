@@ -22,6 +22,7 @@ jobs:
 
     - name: Generate and copy mindmaps to static/mindmaps
       run: |
+        hooks/mindmap-auto-update-deploy.sh
 
     - name: Append mindmap links (safely)
       run: |
