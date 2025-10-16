@@ -46,21 +46,19 @@ done < "$MINDMAP_MARKDOWN_LIST"
 
 # Generate mind maps and copy to static/mindmaps
 for md in $minddocs; do
-    # Generate mind map
-    printf "Generate mindmap for: [%s].\n" "$md"
-    markmap --no-open "$md"
+  printf "Generate mindmap for: [%s].\n" "$md"
+  markmap --no-open "$md"
 
-    html=${md%.md}.html
-    dir="$(dirname "$md")"
-    rel_dir="${dir#content/notes}"
-    mkdir -p "static/mindmaps/$rel_dir"
-    cp "$html" "static/mindmaps/$rel_dir"
-    # copy resources: PDF document
-    find "$dir" -maxdepth 1 -type f -name '*.pdf' -exec cp {} "static/mindmaps/$rel_dir/" \;
-    # copy resources: images
-    if [ -d "$dir/images" ]; then
-      mkdir -p "static/mindmaps/$rel_dir/images"
-      cp -r "$dir/images/." "static/mindmaps/$rel_dir/images/"
-    fi
+  html=${md%.md}.html
+  dir="$(dirname "$md")"
+  rel_dir="${dir#content/notes}"
+  mkdir -p "static/mindmaps/$rel_dir"
+  cp "$html" "static/mindmaps/$rel_dir"
+  # copy resources: PDF document
+  find "$dir" -maxdepth 1 -type f -name '*.pdf' -exec cp {} "static/mindmaps/$rel_dir/" \;
+  # copy resources: images
+  if [ -d "$dir/images" ]; then
+    mkdir -p "static/mindmaps/$rel_dir/images"
+    cp -r "$dir/images/." "static/mindmaps/$rel_dir/images/"
   fi
 done
