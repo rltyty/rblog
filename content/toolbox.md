@@ -60,6 +60,8 @@ seo:
   # ...
 ---
 
+[Neovim/Vim Cheat Sheet](https://korhal.h4ck.me/mindmaps/NeoVim/NeoVim-Memo)
+
 [ETF Data](http://korhal.h4ck.me:18300)
 
 [BBS24x7](https://github.com/rltyty/BBS24x7)
