@@ -2,6 +2,10 @@
 
 set -e
 
+# TODO: It’d be better to move this task from the Git pre-commit hook to a
+# GitHub workflow, so that the repository doesn’t have to track changes to the
+# Markmap HTML output.
+
 MINDMAP_MARKDOWN_LIST="hooks/mindmap.list"
 # Ensure file list exists
 if [ ! -f "$MINDMAP_MARKDOWN_LIST" ]; then
@@ -46,7 +50,7 @@ staged_md_files=$(git diff --cached --name-only --diff-filter=ACMR | grep '\.md$
 # Exit early if no markdown changes
 [ -z "$staged_md_files" ] && exit 0
 
-# Update mindmaps for files present in both minddocs and staged_md_files
+# Update mindmaps for files appear in both minddocs and staged_md_files
 IFS='
 '
 for f in $staged_md_files; do

@@ -48,7 +48,8 @@ jobs:
         find content/notes -name '*.html' | while read html; do
           md="${html%.html}.md"
           if [ -f "$md" ]; then
-            rel="${html#content/notes/}"
+            rel="${html#content/notes/}"    # remove leading path
+            rel="${rel%/index.html}"        # remove trailing /index.html if present
             link="[🧠 View Mindmap](/mindmaps/$rel)"
             grep -qxF "$link" "$md" || echo -e "\n$link" >> "$md"
           fi
