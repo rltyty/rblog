@@ -83,8 +83,11 @@ negative integer $-2^{31}$ overflows and wraps around to itself.
 ```
 Mathematically, in 2's complement system,
 
-$$\sim x = - (x + 1)$$
-$$\text{flip all bits = (negate and subtract 1) or (plus 1 and negate)} $$
+$$ \sim x = -x - 1 = - (x + 1)$$
+$$\text{(Flip all bits) } = \text{ (Negate and subtract 1) or (Add 1 and negate)}$$
+
+$$ -x = \sim x + 1 = \sim (x - 1)$$
+$$\text{(Negate) } = \text{ (Flip all bits and add 1) or (Subtract 1 and flip all bits)}$$
 
 ```java
    ~ 0  == -1
