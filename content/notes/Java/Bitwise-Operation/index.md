@@ -99,6 +99,26 @@ $$\text{(Negate) } = \text{ (Flip all bits and add 1) or (Subtract 1 and flip al
    ~ Integer.MAX_VALUE == Integer.MIN_VALUE 
 ```
 
+### Alignment Rounding
+
+One of the most common bit-manipulation idioms in low-level systems programming.
+
+Like round $x$ up to the next multiple of `pagesize`.
+
+$$
+\begin{aligned}
+\text{aligned} 
+  &= (x + \text{pagesize} - 1) \ \&\ \sim(\text{pagesize} - 1) \\
+  &= \left\lceil \frac{x}{\text{pagesize}} \right\rceil \times \text{pagesize}
+\end{aligned}
+$$
+
+E.g.
+
+```Java
+    assertEquals(8192, 5000 + ((1 << 12) - 1) & ~ ((1 << 12) - 1));
+```
+
 ### Two's complement
 
 $$x = \mathrm{TC}(y) \iff x + y \equiv 0 \pmod{2^n}$$
