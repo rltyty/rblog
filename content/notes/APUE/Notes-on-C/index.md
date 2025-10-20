@@ -1258,6 +1258,9 @@ frame #1: 0x000000010000306a Ex11_3_workerthrd`worker_thrd(arg=0x00007ff7bfefe10
 (bool) $0 = true
 ```
 
+## Bitwise Operation
+
+See [Functions and Tests](https://github.com/rltyty/apue.3e/blob/main/librlt/bitopts.c) 
 
 [1]: https://clangd.llvm.org/installation#compile_commandsjson
 [2]: https://clang.llvm.org/docs/ClangFormat.html#standalone-tool

@@ -117,6 +117,7 @@ E.g.
 
 ```Java
     assertEquals(8192, 5000 + ((1 << 12) - 1) & ~ ((1 << 12) - 1));
+    assertEquals(8192, Math.ceilDiv(5000, 1 << 12) * (1 << 12));
 ```
 
 ### Two's complement
