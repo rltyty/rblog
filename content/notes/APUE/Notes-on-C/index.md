@@ -325,7 +325,7 @@ void stack_size_test5() {
  * - It collapses the array into:
  *   - a .bss reservation (.comm or .lcomm) of 1 GB,
  *   - plus a tiny .data fragment for the non-zero entries.
- * - That’s why the output file size is KB, but getting there required walking
+ * - That's why the output file size is KB, but getting there required walking
  *   through a GB-scale structure.
  */
 void stack_size_test6() {
@@ -423,7 +423,7 @@ Assembly Basic:
 7. Summary
 High addresses
 +---------------------+
-| Caller’s stack data |
+| Caller's stack data |
 | Return address      | ← saved by CALL
 +---------------------+
 | Old RBP             | ← push rbp
@@ -1260,7 +1260,133 @@ frame #1: 0x000000010000306a Ex11_3_workerthrd`worker_thrd(arg=0x00007ff7bfefe10
 
 ## Bitwise Operations
 
+```c
+/**
+ * NOTE:
+  * 1. -value = ~value + 1 = ~(value - 1).
+ * e.g: Alignment,
+ *    alignDown: &= ~pagesize_m1 (or &= -pagesize). Or floorDiv x pagesize
+ *    alignUp  : += pagesize_m1; &= ~pagesize_m1.   Or ceilingDiv x pagesize
+ * 2. All GCC/Clang built-ins - no headers required
+ *    int pos1 = __builtin_ffs(x);        // Find First Set (1-based)
+ *    int lz = __builtin_clz(x);          // Count Leading Zeros
+ *    int tz = __builtin_ctz(x);          // Count Trailing Zeros
+ *    int pop = __builtin_popcount(x);    // Population Count (set bits)
+ *    // 64-bit versions
+ *    int pos2 = __builtin_ffsll(x);      // For long long types
+ *    int lz2 = __builtin_clzll(x);
+ */
+
+/* Core bit operations */
+uint32_t bit_set(uint32_t value, uint8_t n);
+uint32_t bit_clear(uint32_t value, uint8_t n);
+uint32_t bit_toggle(uint32_t value, uint8_t n);
+bool bit_test(uint32_t value, uint8_t n);
+/* LSB operations */
+uint32_t bit_lsb_value(uint32_t value);  // Returns mask of lowest set bit
+int8_t bit_lsb_position(uint32_t value); // Returns position (-1 if none)
+uint32_t bit_clear_lsb(uint32_t value);  // Removes lsb, returns what remains.
+/* Alignment operations */
+uint32_t bit_align_up(uint32_t value, uint32_t alignment);
+uint32_t bit_align_down(uint32_t value, uint32_t alignment);
+// Utility functions
+bool bit_is_power_of_two(uint32_t value);
+uint8_t bit_count(uint32_t value);  // Population count
+```
+
 - See [Functions and Tests](https://github.com/rltyty/apue.3e/blob/main/librlt/bitops.c) 
+
+## `offsetof`, `container_of` Macros and Data Alignment
+
+### Return a member's offset in a type (struct).
+
+- `offsetof` macro based on compiler builtin function
+```c
+#include <stddef.h>
+#define offsetof(t, d) __builtin_offsetof(t, d)
+```
+
+- Classic implementation
+```c
+#define offsetof(TYPE, MEMBER) ((unsigned long) &((TYPE *)0)->MEMBER)
+```
+
+- **NOTE:**
+1. `(TYPE*)0` pretends there's an object of type TYPE located at address 0.
+2. Why is `&((TYPE *)0)->MEMBER` safe and does it not dereference?
+
+    `&((TYPE *)0)->MEMBER` looks like it’s taking a member's address
+   through a null pointer, but:
+   - The compiler never emits a memory load or store.
+   - It simply computes the address offset statically from the structure's
+     layout.
+
+### Go back to the container from a member pointer
+
+- Subtraction the offset from the member pointer
+```c
+#define container_of(PTR, TYPE, MEMBER) \
+        ((TYPE*) ((char*)(PTR) - offsetof(TYPE, MEMBER)))
+```
+
+### `sizeof` and Data alignment
+
+#### $$\text{sizeof(struct S)} = \sum_{i=1}^{n}(\text{padding\_before}(m_i) + \text{sizeof}(m_i))$$
+#### $padding\_before(m_i)$: inserted before member $m_i$ to ensure its starting address aligns with its type's alignment.
+#### $$\text{offset}(m_i) = \text{unaligned\_offset}(m_i) + \text{padding\_before}(m_i)$$
+#### A TYPE with alignment N must be stored at an address that's a multiple of N.
+#### Data alignment ensures efficient CPU access.
+#### Typical alignment rules on x86-64 (System V ABI):
+
+| Type                            | Size | Alignment                       | Why                                |
+| ------------------------------- | ---- | ------------------------------- | ---------------------------------- |
+| `char`, `int8_t`                | 1 B  | 1 B                             | Can start anywhere                 |
+| `short`, `int16_t`              | 2 B  | 2 B                             | Must align to 2 B                  |
+| `int`, `float`                  | 4 B  | 4 B                             | Word-aligned for 32-bit access     |
+| `long`, `long long`, `double`   | 8 B  | 8 B                             | 64-bit CPU registers are 8 B       |
+| `pointer`(`void *`, etc.)       | 8 B  | 8 B                             | Pointers are 8 B on 64-bit systems |
+| Structs                         | —    | largest alignment among members | So members stay aligned            |
+
+
+### Tests
+
+- See [`offsetof`, `container_of` and padding Tests](https://github.com/rltyty/apue.3e/blob/main/mytests/macro/offsetof_test.c) 
+
+## Difference between `malloc(3)`, `sbrk(2)` and `mmap(2)`
+
+
+Process virtual address space (simplified)
+| text/data/bss | heap (sbrk) | mmap regions | stacks | libs |
+| ------------- | ----------- | ------------ | ------ | ---- |
+
+| Aspect       | Heap segment                                    | mmap region                    |
+| ------------ | ----------------------------------------------- | ------------------------------ |
+| Source       | `brk()`/`sbrk()`                                | `mmap()`                       |
+| Typical size | small (few MB) for many small allocs            | large (MB–GB) for large blocks |
+| Ratio        | highly variable (depends on allocation pattern) |                                |
+| Modern trend | decreasing heap use, increasing mmap use        |                                |
+
+
+- `malloc(3)` is a standard C library function that provides dynamic memory
+  allocation to user programs. Internally, it obtains memory from the kernel
+  using `brk(2)` (heap extension) and `mmap(2)` (anonymous mappings).
+
+- `brk(2)` and `sbrk(2)` adjust the process's data segment by setting the program
+  break, which marks the end of the heap and lies just above the BSS segment.
+  Increasing or decreasing the program break with `sbrk(N)` or `sbrk(-N)` grows or
+  shrinks the heap region. This mechanism is typically used for small
+  allocations (less than ~128 KB).
+
+- `mmap(2)` provides a more modern and flexible way to allocate or map memory.
+  It can map files, devices, or anonymous memory regions anywhere in the
+  process's virtual address space, and the memory can be released with
+  `munmap(2).` Allocators commonly use it for large allocations or
+  special-purpose mappings.
+
+- Both `brk(2)` and `mmap(2)` allocate memory within the process's virtual address
+  space, but the former manages a single contiguous heap segment, while the
+  latter can create independent mappings anywhere in memory.
+
 
 [1]: https://clangd.llvm.org/installation#compile_commandsjson
 [2]: https://clang.llvm.org/docs/ClangFormat.html#standalone-tool
