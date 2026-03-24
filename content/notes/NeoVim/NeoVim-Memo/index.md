@@ -318,26 +318,89 @@ of a mapping.
 See [How to insert a column on the right side of a file][1]
 
 ### 26. Visual block edit
-```
-+ insert a column ((<j>+1) rows) of text
+
+#### insert a column ((<j>+1) rows) of text
+
 ```
     <C-v><j>jI<text>
 ```
   **Note**: If the block spans short lines that do not extend into the block,
   the text is not inserted in that line.
 
-+ append a column of text after block selection, use `A` instead of `I`
+#### append a column of text after block selection, use `A` instead of `I`
 
   **Note**:
   `<C-v><j>j$A<text>` append text to the end of each line in the block
 
-+ user a character <c> to fill a rectangle of (<j>+1) x (<l>+1) size.
+#### user a character <c> to fill a rectangle of (<j>+1) x (<l>+1) size.
 ```
     <C-v><j>j<l>lr<c>
 ```
   **Note**:
 `r`: replace with
+
+#### change a column of A to B, use `c` command.
+
+Change `LIST` to `ARRAY`
+
 ```
+    <C-V>8jt_cARRAY<Esc>
+```
+
+```
+    LIST_BOOLEAN                ARRAY_BOOLEAN
+    LIST_BYTE                   ARRAY_BYTE
+    LIST_CHARACTER              ARRAY_CHARACTER
+    LIST_SHORT                  ARRAY_SHORT
+    LIST_INTEGER      -->       ARRAY_INTEGER
+    LIST_LONG                   ARRAY_LONG
+    LIST_FLOAT                  ARRAY_FLOAT
+    LIST_DOUBLE                 ARRAY_DOUBLE
+    LIST_STRING                 ARRAY_STRING
+```
+
+Change `_XXXX` to `FOO`
+
+```
+    A<Space><Space><Esc><C-V>8jT_cFOO<Esc>
+```
+
+```
+    LIST_BOOLEAN                LIST_FOO
+    LIST_BYTE                   LIST_FOO
+    LIST_CHARACTER              LIST_FOO
+    LIST_SHORT                  LIST_FOO
+    LIST_INTEGER      -->       LIST_FOO
+    LIST_LONG                   LIST_FOO
+    LIST_FLOAT                  LIST_FOO
+    LIST_DOUBLE                 LIST_FOO
+    LIST_STRING                 LIST_FOO
+```
+
+#### Bonus: Change `FOO` in the 2nd column to `1`~`9`
+
+```
+    v8j:'<,'>s/_\w\+\ze\s*$/\="_".(line(".")-line("'<")+1)/
+```
+
+```
+    LIST_BOOLEAN                LIST_1
+    LIST_BYTE                   LIST_2
+    LIST_CHARACTER              LIST_3
+    LIST_SHORT                  LIST_4
+    LIST_INTEGER                LIST_5
+    LIST_LONG                   LIST_6
+    LIST_FLOAT                  LIST_7
+    LIST_DOUBLE                 LIST_8
+    LIST_STRING                 LIST_9
+```
+
+**NOTE**:
+- `\=`: switches to expression evaluation
+- `line(".")`: current line number being substituted 
+- `line("'<")`: line number of the start of the visual selection
+- `\ze\s*$`: the `\ze` sets the end of match, ensuring it only replace the
+   suffix at the end of the line (i.e. the second column)
 
 ### 27. `tpope/vim-surround`
 #### Builtin surrounding characters `<`, `t`, `a` (see `:h surround`)
