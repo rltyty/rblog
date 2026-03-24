@@ -345,7 +345,7 @@ sitemap:
   filename: sitemap.xml
   priority: 0.5
 Permalinks:
-  posts: :filename
+  posts: :contentbasename
 privacy:
   googleAnalytics: {}
   twitter: {}
