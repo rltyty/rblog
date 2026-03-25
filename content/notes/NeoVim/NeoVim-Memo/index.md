@@ -91,66 +91,65 @@ change name and <CR>
 
 #### 3.2 Jump by sentence
 
-- `)`           -- forward, next sentence
-- `(`           -- backward, previous sentence
+```
+    )               forward, next sentence
+    (               backward, previous sentence
+```
 
 #### 3.3 Jump by paragraph
 
-- `}`           -- forward, next paragraph
-- `{`           -- backward, previous paragraph
+```
+    }               forward, next paragraph
+    {               backward, previous paragraph
+```
 
-### 4. Resize split buffer window
+#### 3.4 Jump to marker
+
 ```
-<C-W> =         -- to equal size
-[N]<C-W> +/-    -- adjust height by [N] lines
-[N]<C-W> </>    -- adjust width by [N] rows
+    mA              mark the current position to register A
+    `A              jump to mark A in the current buffer
 ```
+
+### 4. [Placeholder]
 
 ### 5. Windows
-#### 5.1 Maximize the current window and resume the previous split structure.
+#### 5.1 Operate split windows
 ```
-<C-W> _         maximize a window split horizontally
-<C-W> |         maximize a window split vertically
-
-or
-<C-W> T         move the current window to another tab
-mA              mark the current position to register A
-ZZ              close the current buffer
-<C-W> <C-V>     split the window vertically
-or
-<C-W> <C-S>     split the window horizontally
-resize if necessary, e.g 30<C-W>< (resize the current window to left by 30
-cols)
-`A              jump to mark A in the current buffer
+    <C-W> <C-V>     split the window vertically
+    <C-W> <C-S>     split the window horizontally
+    <C-W> _         maximize a window split horizontally
+    <C-W> |         maximize a window split vertically
+    <C-W> =         adjust split windows to equal size
+    [N]<C-W> +/-    adjust current window height by [N] rows more/less
+    [N]<C-W> </>    adjust current window width by [N] cols more/less
+    <C-W> r         rotate split windows, can swap two split windows
 ```
 
-
-#### 5.2 Rotate splited windows
+#### 5.2 Close windows
 
 ```
-  `<c-w>r`      -- can be used to swap two splited windows
-```
-
-#### 5.3 Duplicate current buffer in another tab
-```
-:tab sp
-:tab vs
+    <C-W> c         close the current window
+    <C-W> o         same to `:on[ly]`, close other windows except the current
+    ZZ              same to `:x`, write if modified, then close the current
 ```
 
-#### 5.4 Just close the new tab to resume
+#### 5.3 Move a window to another tab
 ```
-ZZ or <C-W> c
+    :tab sp/vs      Duplicate current buffer in another tab
+    <C-W> T         Move the current window to another tab
 ```
 
-#### 5.5 Open N files in N windows split horizontally
-```
-vim -O2 <f1> <f2>                       (-o2 for split vertically)
-vim -O <f1> <f2> ... <fN>               (-o  for split vertically)
+#### 5.4 Open N files in N windows
 
-open N files in N tabs
-vim -pN <f1> <f2> ... <fN>
-or
-vim -p <f1> <f2> ... <fN>
+```
+    vim -O <f1> <f2> ... <fN>  vertical splits (side by side) by vertical `|`
+    vim -o <f1> <f2> ... <fN>  horizontal splits (stacked) by horizontal `-`
+```
+
+#### 5.5 Open N files in N tabs
+
+```
+    vim -p  <f1> <f2> ... <fN>
 ```
 
 ### 6. Editing remote files with `netrw`

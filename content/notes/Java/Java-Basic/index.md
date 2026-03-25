@@ -284,6 +284,23 @@ assertNotEquals(new BigDecimal(0.3), c.add(d));
 
 ![IEEE-754](./images/ieee754.png)
 
+### Boolean Logical Operations
+
+#### Operations
+- AND:  (`&`)
+- OR :  (`|`)
+- XOR:  (`^`)
+- NOT:  (`!`)
+
+#### Examples
+
+- $A \oplus true \Leftrightarrow \neg{A}$
+- Or in Java,
+```java
+// t is a boolean
+(t ^ true) == !t
+```
+
 ### Java Memory Areas (simplified JVM model)
 
 

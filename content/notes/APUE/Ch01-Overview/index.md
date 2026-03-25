@@ -95,3 +95,7 @@ seo:
 
 
 ![Linux kernel system calls and library functions](./images/Linux_kernel_System_Call_Interface_and_glibc.svg.png)
+
+## [User Space and Kernel Space](https://en.wikipedia.org/wiki/User_space_and_kernel_space)
+
+![User space and kernel space](./images/usermode.kernelmode.png)
