@@ -415,6 +415,17 @@ Change `_XXXX` to `FOO`
 #include <unistd.h>
 ```
 
+#### Surround the whole line by `()`
+
+```
+    yss)
+```
+
+```
+    A == B --> (A == B)
+
+```
+
 ### 28. Type a strikethrough letter `a̶b̶c̶ X̶Y̶Z̶`
 - By appending the Unicode "long strike overlay combining character" ('\u0336')
 - `<letter><CTRL-v>u0336`
