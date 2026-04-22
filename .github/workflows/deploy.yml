@@ -2,7 +2,8 @@ name: Deploy rblog (Hugo site)
 
 on:
   push:
-    branches: [ dev ]  # or "master" or your deploy branch
+    branches: [ dev ] # or "master" or your deploy branch
+  workflow_dispatch:  # manually trigger this workflow
 
 jobs:
   build-and-deploy:
