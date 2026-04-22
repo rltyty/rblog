@@ -9,6 +9,8 @@ map({'n', 'v'}, '<leader>zd', ': !rm -rf ./public/ && hugodeploy ' .. site .. '<
 
 map({'n', 'v'}, '<leader>zD', ': !rm -rf ./public && hugodeploy -D ' .. site .. '<CR>', {desc = 'Build and deploy Hugo site (Draft).'})
 
+map({'n', 'v'}, '<leader>zW', ': !gh workflow run .github/workflows/deploy.yml --ref dev <CR>', {desc = 'Manually trigger Github deploy workfow'})
+
 map({'n', 'v'}, '<leader>zn', ': !hugo new content --kind chapter notes/', {desc = 'Create a new note'})
 
 map({'n', 'v'}, '<leader>zC', ': !hugoclean<CR>', {desc = 'Clean the site build'})

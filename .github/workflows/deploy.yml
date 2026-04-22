@@ -11,14 +11,14 @@ jobs:
 
     steps:
     - name: Checkout repo (with submodules)
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         submodules: recursive  # ⬅️ this ensures theme submodule is also checked out
 
     - name: Install Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
-        node-version: '20'
+        node-version: '24'
 
     - name: Install markmap-cli
       run: npm install -g markmap-cli
@@ -49,7 +49,7 @@ jobs:
       run: hugo --minify
 
     - name: Deploy via rsync
-      uses: burnett01/rsync-deployments@7.0.2
+      uses: burnett01/rsync-deployments@8
       with:
         switches: -avz --delete
         path: public/
