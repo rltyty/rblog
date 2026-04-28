@@ -32,6 +32,18 @@ This is an inline formula $y = \sqrt{x}$.
 git submodule add --depth=1 https://github.com/dillonzq/LoveIt themes/LoveIt
 ```
 
+## Update a theme
+
+```sh
+git submodule update --remote --merge themes/LoveIt
+git commit -m "Update LoveIt theme"
+
+# to update all submodules at once
+git submodule update --remote --merge
+```
+
+
+
 ## Build and deploy site
 
 ```sh
