@@ -373,8 +373,3 @@ outputs:
   taxonomy:
     - HTML
     - RSS
-
-security:
-  allowContent:
-    - text/html
-    - text/markdown
