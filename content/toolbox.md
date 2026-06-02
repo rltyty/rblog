@@ -72,7 +72,9 @@ seo:
 
 [vimtex-zathura](https://github.com/rltyty/vimtex-zathura)
 
-[javatest](https://github.com/rltyty/javatest)
+[Maven:jtkit](https://github.com/rltyty/jtkit)
+
+[Java playground](https://github.com/rltyty/javatest)
 
 [MyTV](https://raw.githubusercontent.com/rltyty/repo-share/refs/heads/main/web/iptv/mytv.m3u)
 
