@@ -2,7 +2,7 @@
 title: "rTools"
 subtitle: ""
 date: 2025-07-28T15:21:10+08:00
-lastmod: 2025-07-28T15:21:10+08:00
+lastmod: 2026-06-02T18:00:06+08:00
 draft: false
 author: "rltyty"
 authorLink: ""
@@ -62,19 +62,21 @@ seo:
 
 [Neovim/Vim Cheat Sheet](https://korhal.h4ck.me/mindmaps/NeoVim/NeoVim-Memo)
 
+[runit.nvim](https://github.com/rltyty/runit.nvim)
+
+[Maven:jtkit](https://github.com/rltyty/jtkit)
+
+[Python playground](https://github.com/rltyty/pytest)
+
+[Java playground](https://github.com/rltyty/javatest)
+
 [ETF Data](http://korhal.h4ck.me:18300)
 
 [BBS24x7](https://github.com/rltyty/BBS24x7)
 
-[runit.nvim](https://github.com/rltyty/runit.nvim)
-
 [fzf-player](https://github.com/rltyty/fzf-player)
 
 [vimtex-zathura](https://github.com/rltyty/vimtex-zathura)
-
-[Maven:jtkit](https://github.com/rltyty/jtkit)
-
-[Java playground](https://github.com/rltyty/javatest)
 
 [MyTV](https://raw.githubusercontent.com/rltyty/repo-share/refs/heads/main/web/iptv/mytv.m3u)
 

@@ -2,7 +2,7 @@
 title: "NeoVim Memo"
 subtitle: ""
 date: 2025-10-16T08:10:09+08:00
-lastmod: 2025-10-16T08:10:09+08:00
+lastmod: 2026-06-02T17:58:15+08:00
 draft: false
 author: "rltyty"
 authorLink: ""
@@ -65,7 +65,7 @@ markmap:
 ---
 # VIM CHEAT SHEET
 
-### 1. Reload vimrc
+### 1. Reload `vimrc`
 
 - `:so %` : reload current file (`so` = source, `%` = current file)
 
