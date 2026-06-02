@@ -63,21 +63,16 @@ markmap:
   initialExpandLevel:
     - 2     # only leaf node collapsed
 ---
-
-<!--more-->
 # VIM CHEAT SHEET
 
 ### 1. Reload vimrc
-```
-:so %           -- reload current file (so = source, % = current file)
-```
+
+- `:so %` : reload current file (`so` = source, `%` = current file)
 
 ### 2. Change file name
-```
-:Sex            -- split to open an Explorer window
-R               -- Rename
-change name and <CR>
-```
+
+- `:Sex` : split to open an Explorer window
+- `R`    : Rename and press `<Enter>` to confirm
 
 ### 3. Movement
 
@@ -91,117 +86,166 @@ change name and <CR>
 
 #### 3.2 Jump by sentence
 
-```
-    )               forward, next sentence
-    (               backward, previous sentence
-```
+- `)` : forward, next sentence
+- `(` : backward, previous sentence
 
 #### 3.3 Jump by paragraph
 
-```
-    }               forward, next paragraph
-    {               backward, previous paragraph
-```
+- `}` : forward, next paragraph
+- `{` : backward, previous paragraph
 
 #### 3.4 Jump to marker
 
-```
-    mA              mark the current position to register A
-    `A              jump to mark A in the current buffer
-```
+- `mA` : mark the current position to register A
+- `` `A `` : jump to mark A in the current buffer
 
-### 4. [Placeholder]
+### 4. [Place holder]
 
 ### 5. Windows
-#### 5.1 Operate split windows
-```
-    <C-W> <C-V>     split the window vertically
-    <C-W> <C-S>     split the window horizontally
-    <C-W> _         maximize a window split horizontally
-    <C-W> |         maximize a window split vertically
-    <C-W> =         adjust split windows to equal size
-    [N]<C-W> +/-    adjust current window height by [N] rows more/less
-    [N]<C-W> </>    adjust current window width by [N] cols more/less
-    <C-W> r         rotate split windows, can swap two split windows
+
+#### 5.1 Maximize the current window and resume the previous split structure.
+
+- `<C-W> _`         maximize a window split horizontally
+- `<C-W> |`         maximize a window split vertically
+- `<C-W> T`         move the current window to another tab
+- `<C-W> <C-V>`     split the window vertically
+- `<C-W> <C-S>`     split the window horizontally
+
+#### 5.2 Rotate split windows
+
+- `<c-w>r` : can be used to swap two splited windows
+
+#### 5.3 Resize windows
+
+- `<C-W> =`         : to equal size
+- `[N]<C-W> +/-`    : adjust height by [N] lines
+- `[N]<C-W> </>`    : adjust width by [N] rows
+
+#### 5.4 Duplicate current buffer in another tab
+
+- `:tab sp`
+- `:tab vs`
+
+#### 5.5 Just close the new tab to resume
+
+- `ZZ`
+- `<C-W> c`
+
+#### 5.6 Open N files
+
+##### 5.6.1 In N windows horizontally
+
+```bash
+vim -O[N] <f1> <f2> ... <fN>
 ```
 
-#### 5.2 Close windows
+##### 5.6.2 In N windows vertically (stacked)
 
-```
-    <C-W> c         close the current window
-    <C-W> o         same to `:on[ly]`, close other windows except the current
-    ZZ              same to `:x`, write if modified, then close the current
+```bash
+vim -o[N] <f1> <f2> ... <fN>
 ```
 
-#### 5.3 Move a window to another tab
-```
-    :tab sp/vs      Duplicate current buffer in another tab
-    <C-W> T         Move the current window to another tab
-```
+##### 5.6.3 In N tabs
 
-#### 5.4 Open N files in N windows
-
-```
-    vim -O <f1> <f2> ... <fN>  vertical splits (side by side) by vertical `|`
-    vim -o <f1> <f2> ... <fN>  horizontal splits (stacked) by horizontal `-`
-```
-
-#### 5.5 Open N files in N tabs
-
-```
-    vim -p  <f1> <f2> ... <fN>
+```bash
+vim -p[N] <f1> <f2> ... <fN>
 ```
 
 ### 6. Editing remote files with `netrw`
-- vim scp://rpi-lan//home/pi/tmp/a
-Note: proto://<connect_string>/<abs_path>, double slashes needed
-```
-%               -- Create a new file
-d               -- Create a directory
-```
+
+- `vim scp://rpi-lan//home/pi/tmp/a`
+  - Note: `proto://<connect_string>/<abs_path>`, double slashes needed
+- `%` : Create a new file
+- `d` : Create a directory
 
 ### 7. Insert output of external command
-```
-:read !date<cr>     -- Insert a date in the next line
-:read !date<cr>kJ   -- Insert a date in the current line
-:read !date +'\%a \%Y-\%m-\%d \%T \%Z'     (Note: '%' need to be escaped)
-                    -- Insert a long format date in 24hr mode with weekday and
-                       timezone
-```
+
+- `:read !date<cr>`   : Insert a date in the next line
+- `:read !date<cr>kJ` : Insert a date in the current line
+- `:read !date +'\%a \%Y-\%m-\%d \%T \%Z'` : Insert a long format date in 24hr mode with weekday and
+  timezone (Note: '%' need to be escaped)
 
 ### 8. Vimscript
-#### 8.1 line continuation
-     Add a backslash in the next line make sure the backslash is the first
-     non-white character.
-     ```
-     let a = "Hello,
-        \world!
-         \ This i
-      \s a test of
-     \ line continuation."
-     echo a
-     - Output:
-     Hello, world! This is a test of line continuation.
-     ```
 
-### 9. Lua:
-#### 9.1 `vim.o`, `vim.go`, `vim.bo`/`vim.wo`, `vim.g` and `vim.b`, etc.
-```
-set options: (set, setg, setl)
-vim.o ~ vim.opt, vim.go ~ setg(lobal), vim.bo/vim.wo ~ setl(ocal)
-set variables: (8 scopes, let b:/w:/t:/g:/l:/s:/a:/v:) and vim.env (see
-expand-env and :let-environment)
-e.g. vim.g.<var> = <val> ~ let g:<var> = <val>
-     vim.env.FOO = 'bar'
-     print(vim.env.TERM)
-NOTE: vim.opt seems to be safer than vim.o, because it seems that some options
-cannot be set by vim.o
-```
+#### 8.1 Line continuation
 
+- Add a backslash in the next line make sure the backslash is the first
+non-white character.
+  ```
+  let a = "Hello,
+  \world!
+   \ This i
+  \s a test of
+  \ line continuation."
+  echo a    " Output: Hello, world! This is a test of line continuation.
+  ```
+
+### 9. Lua
+
+#### 9.1 Set Vim/Neovim builtin options
+
+- Vimscript set command: `set`, `setg[lobal]`, `setl[ocal]`
+- Lua equivalent: `vim.opt`, `vim.opt_global`, `vim.opt_local`
+- Obsolete Lua equivalent: ~~`vim.o`, `vim.go`, `vim.bo|wo`~~
+  ```
+  To set a boolean toggle:
+  Vimscript: `set number`
+  Lua:       `vim.opt.number = true`,
+             `vim.o.number = true`
+
+  To set a list option:
+  Vimscript: `set wildignore=*.o,*.a,__pycache__`
+             `vim.opt.wildignore = { '*.o', '*.a', '__pycache__' }`
+             `vim.o.wildignore = '*.o,*.a,__pycache__'`
+
+  To replicate the behavior of |:set+=|:
+  Vimscript: `set wildignore+=*.pyc,node_modules`
+  Lua:       vim.opt.wildignore:append { "*.pyc", "node_modules" }
+             vim.o.wildignore = vim.o.wildignore .. ',*.pyc,node_modules'
+
+  To set a map-style option:
+  Vimscript: `set listchars=space:_,tab:>~`
+  Lua:       `vim.opt.listchars = { space = '_', tab = '>~' }`
+             `vim.o.listchars = 'space:_,tab:>~'`
+  ```
+
+- Set options with methods for list/set/map options:
+  | Vimscript          | Lua                                | Description      |
+  |--------------------|------------------------------------|------------------|
+  | `set {option}+=val` | `vim.opt.{option}:append(val)`    | add to end       |
+  | `set {option}^=val` | `vim.opt.{option}:prepend(val)`   | add to start     |
+  | `set {option}-=val` | `vim.opt.{option}:remove(val)`    | remove value     |
+  | `set {option}=val`  | `vim.opt.{option} = val`          | assign/overwrite |
+  | `set {option}&`     | `vim.opt.{option} = nil`          | reset to default |
+
+  **NOTE:** Always use `vim.opt` and `vim.opt_*` over `vim.o`. `vim.go` and `vim.bo|wo`
+
+#### 9.2 Custom variable scopes
+
+- Vimscript: `let b:|w:|t:|g:|l:|s:|a:|v:`
+- Lua equivalent: only cover the first 4 `vim.b|w|t|g`, the latter 4 are more
+  Vimscript-specific scoping concepts
+
+  ```
+  Vimscript: `let g:<var> = <val>`
+  Lua:       `vim.g.<var> = <val>`
+  ```
+
+#### 9.3 Environment variable
+
+- `vim.env`, compare `h: expand-env` and `:h let-environment`
+
+  ```
+  Vimscript: `let $PATH = $PATH . ":/usr/local/bin"`
+  Lua      : `vim.env.PATH = vim.env.PATH .. ":/usr/local/bin"`
+
+  Vimscript: `echo $PATH`
+  Lua      : `print(vim.env.PATH)`
+  ```
 
 ### 10. Add my personal Nvim notes to Vim help doc system.
 - Add a directory entry to `vim.runtimepath`, then the `doc` directory
-  under it will be in the search list when typing :h <my topic>
+  under it will be in the search list when typing :h `<my topic>`
 - generate tags for `doc` by `:helptags doc`
 - By default, `:help <topic>` opens the topic file in read-only mode,
   because `modifiable` option is set off by help. Turn it on by
@@ -210,30 +254,32 @@ cannot be set by vim.o
 ### 11. Show current buffer file's full path: `<c-g>`
 
 ### 12. Neovim terminal mode
-```
-    <C-\> <C-N>     change to normal mode
-    a/i/A/I ...     change to append/insert... mode
-```
+
+- `<C-\> <C-N>` : change to normal mode
+- `a/i/A/I ...` : change to append/insert... mode
 
 ### 13. Enter Ex mode by `gQ`, exit the mode by `:vi`
 
-### 14. In Ex mode, use `lua print(<api call>)` to quickly check command output.
-#### 14.1 Example `lua print(vim.fn.expand('%'))`
+### 14. In Ex mode, use `lua print(<func call>)` to check command output.
+
+- `lua print(vim.fn.expand('%'))`
 
 ### 15. Since 0.9, `:=<var>` will show variable value.
 
-### 16. Char count `:s/,//gn`            count how many commas in a line
+### 16. Char count `:s/,//gn` count how many commas in a line
 
-### 17. Remove all the trailing whitespaces for each line in file.
+### 17. Remove all the trailing white spaces for each line in file.
+
 - `:%s/\s\+$//e`
 
 ### 18. Show man page about the word under the current cursor:
-```
-    `gK`    map('n', 'gK', '<Cmd>Man<CR>', {desc = 'Show man page for <cword>'})
-    `K`     remap vim.lsp.buf.hover() by lsp
-```
+
+- `gK` : `map('n', 'gK', '<Cmd>Man<CR>', {desc = 'Show man page for
+<cword>'})`
+- `K`  : remap `vim.lsp.buf.hover()` by lsp
 
 ### 19. LSP
+
 ```
 - Go to definition: `tagfunc` (`C-]` and other tag commands)
 - Completion: `omnifunc`
@@ -265,144 +311,167 @@ cannot be set by vim.o
     + LazyVim/lua/lazyvim/plugins/extras/lang/java.lua
 ```
 
-### 20. <Cmd> :map-cmd
-- This pseudokey begins a "command mapping", which executes the command without
-changing modes. "<Cmd>...<CR>" can be used instead of ":...<CR>" in the {rhs}
-of a mapping.
+### 20. `<Cmd>` :map-cmd
+
+- This pseudo key begins a "command mapping", which executes the command without
+changing modes. `<Cmd>...<CR>` can be used instead of `:...<CR>` in the
+`{rhs}` of a mapping.
 
 ### 21. `<C-R><C-W>` insert the word under the cursor. See `h:<C-R>`
 
-### 22. Debug Neovim instance in Neovim. See `:h osv` and
-- https://github.com/nanotee/nvim-lua-guide?tab=readme-ov-file#tips-2
+### 22. Debug Neovim instance in Neovim. See `:h osv`
 
-### 23. To see last command output like `:!mvn test`
+### 23. To see last command output like: `g<`
 
-    `g<`
-
-### 24. Quickly switch between current and last buffer
-
-    `<C-6>`
+### 24. Quickly switch between current and last buffer: `<C-6>`
 
 ### 25. Draw a table, especially add a column on the right side of a file
 
-    ┌──────────────────────────────────────────────────────┐
-    │               C Operator precedence table            │
-    │               operator                associativity  │
-    │   ()  []  ->  .                           L          │
-    │   !   ~   ++  --  - (type) * & sizeof     R          │
-    │   *   /   %                               L          │
-    │   +   -                                   L          │
-    │   <<  >>                                  L          │
-    │   <   <=   >  >=                          L          │
-    │   ==  !=                                  L          │
-    │   &                                       L          │
-    │   ^                                       L          │
-    │   |                                       L          │
-    │   &&                                      L          │
-    │   ||                                      L          │
-    │   ?:                                      R          │
-    │   assignments                             R          │
-    │   ,                                       L          │
-    └──────────────────────────────────────────────────────┘
-    Note: To draw a table, espectially a column on the right side (meaning
-    the cursor needs to be positioned where there is no actual character.)
-    Two options need to be set, `:set ve=block`, `:set nosol` (virtualedit,
-    nostartofline)
-    Another method is to make use of `column -t` to pretty print,
-    visual select some lines and add <some character> at the end of each
-    line by `:norm A <some character>` and then makes it align like a table
-    by `:! column -t`. If the whole file is to be edited, add "%" after ":"
-    for each command.
+```txt
+┌──────────────────────────────────────────────────────┐
+│               C Operator precedence table            │
+│               operator                associativity  │
+│   ()  []  ->  .                           L          │
+│   !   ~   ++  --  - (type) * & sizeof     R          │
+│   *   /   %                               L          │
+│   +   -                                   L          │
+│   <<  >>                                  L          │
+│   <   <=   >  >=                          L          │
+│   ==  !=                                  L          │
+│   &                                       L          │
+│   ^                                       L          │
+│   |                                       L          │
+│   &&                                      L          │
+│   ||                                      L          │
+│   ?:                                      R          │
+│   assignments                             R          │
+│   ,                                       L          │
+└──────────────────────────────────────────────────────┘
+Note: To draw a table, espectially a column on the right side (meaning
+the cursor needs to be positioned where there is no actual character.)
+Two options need to be set, `:set ve=block`, `:set nosol` (virtualedit,
+nostartofline)
+Another method is to make use of `column -t` to pretty print,
+visual select some lines and add <some character> at the end of each
+line by `:norm A <some character>` and then makes it align like a table
+by `:! column -t`. If the whole file is to be edited, add "%" after ":"
+for each command.
+```
 
-See [How to insert a column on the right side of a file][1]
+    See [How to insert a column on the right side of a file][1]
 
 ### 26. Visual block edit
 
-#### insert a column ((<j>+1) rows) of text
+#### 26.1 Insert a column (`N`+1 rows) of text
+
+- `<C-v><N>jI<text>`
+- **Note**: If the block spans short lines that do not extend into the block,
+the text is not inserted in that line.
+
+#### 26.2 Append a column of text after block selection, use `A` instead of `I`
 
 ```
-    <C-v><j>jI<text>
-```
-  **Note**: If the block spans short lines that do not extend into the block,
-  the text is not inserted in that line.
-
-#### append a column of text after block selection, use `A` instead of `I`
-
-  **Note**:
-  `<C-v><j>j$A<text>` append text to the end of each line in the block
-
-#### user a character <c> to fill a rectangle of (<j>+1) x (<l>+1) size.
-```
-    <C-v><j>j<l>lr<c>
-```
-  **Note**:
-`r`: replace with
-
-#### change a column of A to B, use `c` command.
-
-Change `LIST` to `ARRAY`
-
-```
-    <C-V>8jt_cARRAY<Esc>
+<C-v><N>j$A<text>   append text to the end of each line in the block
 ```
 
-```
-    LIST_BOOLEAN                ARRAY_BOOLEAN
-    LIST_BYTE                   ARRAY_BYTE
-    LIST_CHARACTER              ARRAY_CHARACTER
-    LIST_SHORT                  ARRAY_SHORT
-    LIST_INTEGER      -->       ARRAY_INTEGER
-    LIST_LONG                   ARRAY_LONG
-    LIST_FLOAT                  ARRAY_FLOAT
-    LIST_DOUBLE                 ARRAY_DOUBLE
-    LIST_STRING                 ARRAY_STRING
-```
+#### 26.3 Use a character `<c>` to fill a rectangle of (`M`+1) x (`N`+1) size
 
-Change `_XXXX` to `FOO`
+- `<C-v><M>j<N>lr<c>` : `r` replace with
+
+#### 26.4 Surround each line with double quotes and append a comma for each
 
 ```
-    A<Space><Space><Esc><C-V>8jT_cFOO<Esc>
+V4j:normal I"
+V4j:normal A",
 ```
 
-```
-    LIST_BOOLEAN                LIST_FOO
-    LIST_BYTE                   LIST_FOO
-    LIST_CHARACTER              LIST_FOO
-    LIST_SHORT                  LIST_FOO
-    LIST_INTEGER      -->       LIST_FOO
-    LIST_LONG                   LIST_FOO
-    LIST_FLOAT                  LIST_FOO
-    LIST_DOUBLE                 LIST_FOO
-    LIST_STRING                 LIST_FOO
+```txt
+# From
+
+pytest>=8.0.0
+pytest-html>=4.0.0
+ruff
+mypy
+build
+
+# To
+
+"pytest>=8.0.0",
+"pytest-html>=4.0.0",
+"ruff",
+"mypy",
+"build",
 ```
 
-#### Bonus: Change `FOO` in the 2nd column to `1`~`9`
+#### 26.5 Change a column from A to B, use `c` command.
+
+##### 26.5.1 Change prefix
 
 ```
-    v8j:'<,'>s/_\w\+\ze\s*$/\="_".(line(".")-line("'<")+1)/
+<C-V>8jt_cARRAY<Esc>
 ```
 
 ```
-    LIST_BOOLEAN                LIST_1
-    LIST_BYTE                   LIST_2
-    LIST_CHARACTER              LIST_3
-    LIST_SHORT                  LIST_4
-    LIST_INTEGER                LIST_5
-    LIST_LONG                   LIST_6
-    LIST_FLOAT                  LIST_7
-    LIST_DOUBLE                 LIST_8
-    LIST_STRING                 LIST_9
+LIST_BOOLEAN                ARRAY_BOOLEAN
+LIST_BYTE                   ARRAY_BYTE
+LIST_CHARACTER              ARRAY_CHARACTER
+LIST_SHORT                  ARRAY_SHORT
+LIST_INTEGER      -->       ARRAY_INTEGER
+LIST_LONG                   ARRAY_LONG
+LIST_FLOAT                  ARRAY_FLOAT
+LIST_DOUBLE                 ARRAY_DOUBLE
+LIST_STRING                 ARRAY_STRING
 ```
 
-**NOTE**:
+##### 26.5.2 Change suffix
+
+```
+A<Space><Space><Esc><C-V>8jT_cFOO<Esc>
+```
+
+```
+LIST_BOOLEAN                LIST_FOO
+LIST_BYTE                   LIST_FOO
+LIST_CHARACTER              LIST_FOO
+LIST_SHORT                  LIST_FOO
+LIST_INTEGER      -->       LIST_FOO
+LIST_LONG                   LIST_FOO
+LIST_FLOAT                  LIST_FOO
+LIST_DOUBLE                 LIST_FOO
+LIST_STRING                 LIST_FOO
+```
+
+##### 26.5.3: Change suffix dynamically
+
+```
+v8j:'<,'>s/_\w\+\ze\s*$/\="_".(line(".")-line("'<")+1)/
+```
+
+```
+LIST_BOOLEAN                LIST_1
+LIST_BYTE                   LIST_2
+LIST_CHARACTER              LIST_3
+LIST_SHORT                  LIST_4
+LIST_INTEGER      -->       LIST_5
+LIST_LONG                   LIST_6
+LIST_FLOAT                  LIST_7
+LIST_DOUBLE                 LIST_8
+LIST_STRING                 LIST_9
+```
+
+```
+NOTE:
 - `\=`: switches to expression evaluation
-- `line(".")`: current line number being substituted 
+- `line(".")`: current line number being substituted
 - `line("'<")`: line number of the start of the visual selection
 - `\ze\s*$`: the `\ze` sets the end of match, ensuring it only replace the
    suffix at the end of the line (i.e. the second column)
+```
 
 ### 27. `tpope/vim-surround`
-#### Builtin surrounding characters `<`, `t`, `a` (see `:h surround`)
+
+#### 27.1 Builtin surrounding characters `<`, `t`, `a` (see `:h surround`)
+
 ```c
 #include "unistd.h"
 // cs"<       % < will trigger a prompt for a tag name to insert
@@ -415,24 +484,29 @@ Change `_XXXX` to `FOO`
 #include <unistd.h>
 ```
 
-#### Surround the whole line by `()`
+#### 27.2 Surround the whole line by `()`
 
 ```
-    yss)
+yss)
 ```
 
 ```
-    A == B --> (A == B)
+# From
+A == B
 
+# To
+(A == B)
 ```
 
-### 28. Type a strikethrough letter `a̶b̶c̶ X̶Y̶Z̶`
-- By appending the Unicode "long strike overlay combining character" ('\u0336')
+### 28. Type a strike through letter `a̶b̶c̶ X̶Y̶Z̶`
+
+- By appending the Unicode "long strike overlay combining character" (`\u0336`)
 - `<letter><CTRL-v>u0336`
 
 ### 29. Registers
 
 #### 10 Types:
+
 - 1. The unnamed register ""
 - 2. 10 numbered registers "0 to "9
 - 3. The small delete register "-
@@ -444,27 +518,149 @@ Change `_XXXX` to `FOO`
 - 9. The black hole register "_
 - 10. Last search pattern register "/
 
-#### Ex1. Copy a selection to "1, paste "1 to the target position
+#### Copy a selection to "1, paste "1 to the target position
+
 ```
-"1yiw           -- Copy the word at the current cursor to "1
-                -- Move to the target position
-                -- Method 1: change to insert mode and
-<C-R>1          -- Paste "1, <C-R> {register}: Insert the contents of a
-                --                             numbered or named register.
-"1p(P)          -- Method 2: Just paste (p: after cursor, P: before cursor)
+"1yiw           # Copy the word at the current cursor to "1
+                # Move to the target position
+                # Method 1: change to insert mode and
+
+<C-R>1          # Paste "1, <C-R> {register}: Insert the contents of a
+                #                             numbered or named register.
+
+"1p(P)          # Method 2: Just paste (p: after cursor, P: before cursor)
 ```
 
-#### Ex2. Evaluate an expression and put the result in the target position
+#### Evaluate an expression and put the result in the target position
+
 ```
-12345 * 56789 = 701060205       -- suppose the cursor is at 1
-yf9A<Space><C-R>=<C-R>"<CR>     -- yank the expression and prepare to append
-                                -- text at the end of line (after "= "), then
-                                -- call expression register, paste the yanked
-                                -- expression and press <Enter> to append the
-                                -- result.
+12345 * 56789 = 701060205       # suppose the cursor is at 1
+
+yf9A<Space><C-R>=<C-R>"<CR>     # yank the expression and prepare to append
+                                # text at the end of line (after "= "), then
+                                # call expression register, paste the yanked
+                                # expression and press <Enter> to append the
+                                # result.
+
 1 + sqrt(2) = 2.414214
 yf)A<Space><C-R>=<C-R>"<CR>
 
 sin(3.14159 / 6) = 0.5
 yf)A<Space><C-R>=<C-R>"<CR>
 ```
+
+### 30. Treesitter
+
+#### Folding
+
+```
+zR      # Open all folds
+zM      # Close all folds
+zo      # Open fold under cursor
+zc      # Close fold under cursor
+za      # Toggle fold under cursor
+zO      # Open fold + all nested folds under cursor
+zr      # Opens folds one level at a time (increments foldlevel by 1)
+```
+
+#### Fix latex parser installation on Raspberry Pi 3B+
+
+```txt
+The LaTeX treesitter grammar generates a 10MB+ `parser.c` file, requiring
+~2.7GB virtual memory to compile — exceeding Pi 3B+'s 1GB RAM.
+
+If the latex parser is needed on Pi, temporarily enlarge swap before compiling
+(reverts to original size on reboot):
+
+sudo swapoff /var/swap
+sudo fallocate -l 3G /var/swap
+sudo mkswap /var/swap
+sudo swapon /var/swap
+
+free -h     # verify RAM and swap sizes
+
+Then install via `:TSInstall latex` or `vim6` to trigger automatic installation.
+
+After compilation, reboot to shrink swap back to protect SD card from wear.
+
+Or
+
+sudo fallocate -l 2048M /var/swap
+sudo mkswap /var/swap
+sudo swapon /var/swap
+```
+
+### 31. Insert a long repeated string
+
+- DO NOT use [count] in insert mode:
+
+  ```vim
+  1000000ia<ESC>    " ❌
+  ```
+  This repeats the insertion 1M times individually -- very slow.
+
+- Instead, use `repeat()` which generates the string in memory first,
+  then inserts it as a single operation:
+
+  ```vim
+  :put =repeat('a', 1000000)    " ✅
+
+  ```
+
+### 32. Use `vim.fn.expand '%'` in key mapping
+
+- Any Lua code concatenated into a key map string
+  e.g., `.. vim.fn.expand('%') ..` → evaluated once at creation time ❌
+- Inside a Lua function() → evaluated at key-press time ✅
+- `expand('%')` inside a Vimscript string passed to execute → evaluated at key press time ✅
+
+- E.g. `lsp/jdtls.lua:230`
+
+  - Change from
+
+    ```lua
+    map(
+      { 'n' },
+      '<leader>cjB',
+      '<Cmd>Javap ' .. ' -v ' .. vim.fn.expand '%' .. '<CR>',
+      { noremap = true, desc = 'JavaP: view class bytecode (VERBOSE)' }
+    )
+    ```
+
+    to
+
+    ```lua
+    map(
+      { 'n' },
+      '<leader>cjB',
+      function()
+        vim.cmd({ cmd = 'Javap', args = { '-v', vim.fn.expand('%') } })
+      end,
+      { noremap = true, desc = 'JavaP: view class bytecode (VERBOSE)' }
+    )
+    ```
+
+  - Change from
+
+    ```lua
+    map(
+      { 'n' },
+      '<leader>cjD',
+      ':Cfr ' .. vim.fn.expand '%' .. ' ',
+      { noremap = true, desc = 'Cfr: Decompile Java class (args)' }
+    )
+    ```
+
+    to
+
+    ```lua
+    map(
+      { 'n' },
+      '<leader>cjD',
+      function()
+        local path = vim.fn.expand '%'
+        vim.api.nvim_feedkeys(':Cfr ' .. path .. ' ', 'n', false)
+      end,
+      { noremap = true, desc = 'Cfr: Decompile Java class (args)' }
+    )
+    ```
