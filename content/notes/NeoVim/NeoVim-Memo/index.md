@@ -2,7 +2,7 @@
 title: "NeoVim Memo"
 subtitle: ""
 date: 2025-10-16T08:10:09+08:00
-lastmod: 2026-06-02T17:58:15+08:00
+lastmod: 2026-06-03T16:39:38+08:00
 draft: false
 author: "rltyty"
 authorLink: ""
@@ -209,7 +209,7 @@ non-white character.
              `vim.o.listchars = 'space:_,tab:>~'`
   ```
 
-- Set options with methods for list/set/map options:
+- Modify options via `vim.opt` methods
   | Vimscript          | Lua                                | Description      |
   |--------------------|------------------------------------|------------------|
   | `set {option}+=val` | `vim.opt.{option}:append(val)`    | add to end       |
@@ -218,7 +218,62 @@ non-white character.
   | `set {option}=val`  | `vim.opt.{option} = val`          | assign/overwrite |
   | `set {option}&`     | `vim.opt.{option} = nil`          | reset to default |
 
-  **NOTE:** Always use `vim.opt` and `vim.opt_*` over `vim.o`. `vim.go` and `vim.bo|wo`
+  **NOTE:**
+  a. Always use `vim.opt` and `vim.opt_*` over `vim.o`. `vim.go` and
+  `vim.bo|wo`
+  b.
+  ```lua
+  vim.opt.formatoptions:append('n')                   -- ✅
+  vim.opt.formatoptions = vim.opt.formatoptions + 'n' -- ✅, vim.opt creates `__add()` metamethod in metatable
+  vim.opt.formatoptions = vim.opt.formatoptions .. 'n'-- ❌, not a str concat
+  ```
+
+- Get a close look at option type information
+
+  ```lua
+  vim.opt.formatoptions:append('n')         -- add a flag
+  vim.opt.formatlistpat:append('\\|foo')    -- plain string concatenation
+  vim.opt.listchars:append({ tab = '>-' })  -- add/update an entry
+
+  -- `formatoptions`: string option with flaglist semantics
+  :lua print(vim.inspect(vim.api.nvim_get_option_info2('formatoptions', {})))
+  {
+    allows_duplicates = true,
+    commalist = false,
+    default = "tcqj",
+    flaglist = true,
+    ...
+    name = "formatoptions",
+    type = "string",
+    ...
+  }
+
+  -- formatlistpat: plain string option, without commalist or flaglist semantics
+  :lua print(vim.inspect(vim.api.nvim_get_option_info2('formatlistpat', {})))
+  {
+    allows_duplicates = true,
+    commalist = false,
+    default = "^\\s*\\d\\+[\\]:.)}\\t ]\\s*",
+    flaglist = false,
+    ...
+    name = "formatlistpat",
+    type = "string",
+    ...
+  }
+
+  -- listchars: dict-style string option, with commalist and no duplicates semantics
+  :lua print(vim.inspect(vim.api.nvim_get_option_info2('listchars', {})))
+  {
+    allows_duplicates = false,
+    commalist = true,
+    default = "tab:> ,trail:-,nbsp:+",
+    flaglist = false,
+    ...
+    name = "listchars",
+    type = "string",
+    ...
+  }
+  ```
 
 #### 9.2 Custom variable scopes
 
