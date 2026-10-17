@@ -119,7 +119,7 @@ params:
       enable: true
       banner: "images/maintheme.png"
       gravatarEmail: ""
-      avatarURL: "https://raw.githubusercontent.com/googlefonts/noto-emoji/refs/heads/main/svg/emoji_u1f989.svg"
+      avatarURL: "https://raw.githubusercontent.com/googlefonts/noto-emoji/refs/heads/main/2D/svg/emoji_u1f989.svg"
       title: "📜Blog | 📒 Notes | 🧰Tools | 🪐 Space"
       subtitle: "____👋 Hi! ____"
       typeit: true
