@@ -4,3 +4,8 @@
 
 Do nothing update of DEPLOY_HOST when the host name of the deployment target
 server has changed.
+
+
+### Test Case 2
+
+Update DEPLOY_HOST to latest domain name
