@@ -2,7 +2,7 @@
 title: "rTools"
 subtitle: ""
 date: 2025-07-28T15:21:10+08:00
-lastmod: 2026-06-02T18:00:06+08:00
+lastmod: 2026-11-19T00:14:14+08:00
 draft: false
 author: "rltyty"
 authorLink: ""
@@ -62,21 +62,23 @@ seo:
 
 [Neovim/Vim Cheat Sheet](https://korhal.h4ck.me/mindmaps/NeoVim/NeoVim-Memo)
 
-[runit.nvim](https://github.com/rltyty/runit.nvim)
+[DDNS Dynu IP Updater](https://github.com/rltyty/dynu-ip-updater)
 
-[Maven:jtkit](https://github.com/rltyty/jtkit)
+[runit.nvim: A Neovim plugin for running code in current buffer.](https://github.com/rltyty/runit.nvim)
 
-[Python playground](https://github.com/rltyty/pytest)
+[Maven:jtkit: A JUnit-based test facility](https://github.com/rltyty/jtkit)
 
-[Java playground](https://github.com/rltyty/javatest)
+[A Python playground](https://github.com/rltyty/pytest)
 
-[ETF Data](http://korhal.h4ck.me:18300)
+[A Java playground](https://github.com/rltyty/javatest)
 
-[BBS24x7](https://github.com/rltyty/BBS24x7)
+[BBS24x7: A Tmux-based BBS session manager](https://github.com/rltyty/BBS24x7)
 
-[fzf-player](https://github.com/rltyty/fzf-player)
+[fzf-player: A lightweight CLI wrapper for a music player with fuzzy search.](https://github.com/rltyty/fzf-player)
 
-[vimtex-zathura](https://github.com/rltyty/vimtex-zathura)
+[vimtex-zathura: A method for editing LaTeX with a side-by-side preview.](https://github.com/rltyty/vimtex-zathura)
 
-[MyTV](https://raw.githubusercontent.com/rltyty/repo-share/refs/heads/main/web/iptv/mytv.m3u)
+[~~ETF Data - Outdated~~](http://korhal.xubi.org:18300)
+
+[Some IP TV Channels](https://raw.githubusercontent.com/rltyty/repo-share/refs/heads/main/web/iptv/mytv.m3u)
 
