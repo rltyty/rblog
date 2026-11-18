@@ -2,7 +2,7 @@
 title: "rTools"
 subtitle: ""
 date: 2025-07-28T15:21:10+08:00
-lastmod: 2026-11-19T00:14:14+08:00
+lastmod: 2026-11-19T00:19:01+08:00
 draft: false
 author: "rltyty"
 authorLink: ""
@@ -60,7 +60,7 @@ seo:
   # ...
 ---
 
-[Neovim/Vim Cheat Sheet](https://korhal.h4ck.me/mindmaps/NeoVim/NeoVim-Memo)
+[Neovim/Vim Cheat Sheet](https://korhal.xubi.org/mindmaps/NeoVim/NeoVim-Memo)
 
 [DDNS Dynu IP Updater](https://github.com/rltyty/dynu-ip-updater)
 
