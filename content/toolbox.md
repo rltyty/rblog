@@ -2,7 +2,7 @@
 title: "rTools"
 subtitle: ""
 date: 2025-07-28T15:21:10+08:00
-lastmod: 2026-11-19T00:19:01+08:00
+lastmod: 2026-11-21T19:42:16+08:00
 draft: false
 author: "rltyty"
 authorLink: ""
@@ -60,25 +60,19 @@ seo:
   # ...
 ---
 
-[Neovim/Vim Cheat Sheet](https://korhal.xubi.org/mindmaps/NeoVim/NeoVim-Memo)
 
-[DDNS Dynu IP Updater](https://github.com/rltyty/dynu-ip-updater)
+| Project                 | Description                      |
+| ----------------------- | -------------------------------- |
+| [Neovim/Vim Cheat Sheet](https://korhal.xubi.org/mindmaps/NeoVim/NeoVim-Memo) | A mind map of Neovim/Vim tips and notes. |
+| [dynu-ip-updater](https://github.com/rltyty/dynu-ip-updater) | DDNS Dynu IP Updater|
+| [runit.nvim](https://github.com/rltyty/runit.nvim) | A Neovim plugin for running code in current buffer. |
+| [jtkit](https://github.com/rltyty/jtkit) | Maven artifact: A JUnit-based testing facility. |
+| [javatest](https://github.com/rltyty/javatest) | A Java playground |
+| [pytest](https://github.com/rltyty/pytest) | A Python playground |
+| [BBS24x7](https://github.com/rltyty/BBS24x7) | A Tmux-based BBS session manager |
+| [fzf-player](https://github.com/rltyty/fzf-player) | A lightweight CLI wrapper for a music player with fuzzy search. |
+| [vimtex-zathura](https://github.com/rltyty/vimtex-zathura) | A method for editing LaTeX with a side-by-side preview. |
+| [~~ETF Data~~](http://korhal.xubi.org:18300) | ~~Outdated ~~ |
+|[mytv](https://raw.githubusercontent.com/rltyty/repo-share/refs/heads/main/web/iptv/mytv.m3u) | Some IP TV Channels |
 
-[runit.nvim: A Neovim plugin for running code in current buffer.](https://github.com/rltyty/runit.nvim)
-
-[Maven:jtkit: A JUnit-based test facility](https://github.com/rltyty/jtkit)
-
-[A Python playground](https://github.com/rltyty/pytest)
-
-[A Java playground](https://github.com/rltyty/javatest)
-
-[BBS24x7: A Tmux-based BBS session manager](https://github.com/rltyty/BBS24x7)
-
-[fzf-player: A lightweight CLI wrapper for a music player with fuzzy search.](https://github.com/rltyty/fzf-player)
-
-[vimtex-zathura: A method for editing LaTeX with a side-by-side preview.](https://github.com/rltyty/vimtex-zathura)
-
-[~~ETF Data - Outdated~~](http://korhal.xubi.org:18300)
-
-[Some IP TV Channels](https://raw.githubusercontent.com/rltyty/repo-share/refs/heads/main/web/iptv/mytv.m3u)
 
